@@ -1,0 +1,49 @@
+---
+description: Checklist obligatoriu înainte de orice modificare la DirtBooking
+alwaysApply: true
+---
+
+# DirtBooking — Intelligent Developer Checklist
+
+Înainte de a scrie sau modifica cod, verifică SILENȚIOS fiecare regulă:
+
+## 1. Limbă UI — DOAR Română
+- Tot textul vizibil utilizatorului trebuie să fie în română: butoane, navigație, placeholder-e, titluri, etichete, mesaje de eroare, empty states.
+- Fără cuvinte în engleză pe frontend (excepție: nume proprii de brand moto: KTM, Yamaha).
+- Formatare: monedă RON, date `ro-RO`, județe românești.
+
+## 2. Design System — Dark Mode Futurist
+- Tema implicită: dark, fundaluri negre/gri închis, accente neon (KTM Orange, Yamaha Blue, Kawasaki Green).
+- Folosește utilitarele existente: `.glass`, `.glass-strong`, `.glow-ktm`, `.text-gradient-brand`, `.font-heading`.
+- Componente Shadcn + Tailwind; animații Framer Motion unde e cazul.
+- Nu introduce stiluri inline ad-hoc care contrazic sistemul.
+
+## 3. Funcționalități Obligatorii — Nu Sări Peste Ele
+- **Declarații digitale (Waivers)**: checkbox + canvas semnătură obligatorii înainte de confirmare rezervare.
+- **Panou pe roluri**: Rider (rezervări, garaj, mesaje) vs Proprietar (trasee, rezervări, flotă, statistici).
+- **Listare trasee**: adăugare, afișare, filtrare după oraș/județ în România.
+- **Chat**: mesagerie rider ↔ proprietar legată de traseu.
+- Dacă o funcție e incompletă, marchează cu TODO clar — nu o elimina din UI.
+
+## 4. Arhitectură — Next.js App Router Modular
+```
+src/
+  app/              → rute (App Router)
+  components/       → UI pe domenii (landing, tracks, booking, chat, dashboard, auth)
+  lib/db/           → schema, seed, repository (pregătit pentru Supabase)
+  stores/           → Zustand + persist (state local localhost)
+  types/            → tipuri partajate
+```
+- Logică de date în `lib/db/` și `stores/` — nu în componente UI.
+- Componente mici, reutilizabile; fără logică de business în JSX.
+- Server Actions / Supabase: doar când utilizatorul cere conexiune live; până atunci folosește store-uri locale.
+
+## 5. Date & Persistență Locală (faza curentă)
+- Mock-uri realiste românești în `lib/db/seed.ts`.
+- Persistență `localStorage` via Zustand persist pentru demo localhost.
+- Schema SQL în `supabase/schema.sql` = contract viitor, nu runtime activ.
+
+## 6. Calitate Cod
+- TypeScript strict; fără `any` inutil.
+- Build trebuie să treacă (`npm run build`).
+- Modificări minime, focalizate — nu refactoriza ce nu e cerut.
