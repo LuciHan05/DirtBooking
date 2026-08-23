@@ -4,6 +4,13 @@ import { SlidersHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { DIFFICULTY_LABELS, SOIL_LABELS } from "@/lib/format";
 import type { SoilCondition, TrackDifficulty } from "@/types";
@@ -62,21 +69,27 @@ export function TracksFilters({ value, onChange, className }: TracksFiltersProps
           <Label htmlFor="soil-filter" className="sr-only">
             Condiție teren
           </Label>
-          <select
-            id="soil-filter"
-            value={value.soilCondition}
-            onChange={(e) =>
-              onChange({ ...value, soilCondition: e.target.value as SoilCondition | "" })
+          <Select
+            value={value.soilCondition || "all"}
+            onValueChange={(v) =>
+              onChange({
+                ...value,
+                soilCondition: v === "all" ? "" : (v as SoilCondition),
+              })
             }
-            className="h-8 rounded-lg border border-input bg-input/30 px-2.5 text-sm"
           >
-            <option value="">Orice teren</option>
-            {SOIL_VALUES.map((s) => (
-              <option key={s} value={s}>
-                {SOIL_LABELS[s]}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger id="soil-filter" size="sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Orice teren</SelectItem>
+              {SOIL_VALUES.map((s) => (
+                <SelectItem key={s} value={s}>
+                  {SOIL_LABELS[s]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex items-center gap-1.5">

@@ -63,6 +63,7 @@ export interface DbFleetBike {
   year: number;
   status: "available" | "rented" | "maintenance";
   hourly_rate: number;
+  image_url: string | null;
   created_at: string;
 }
 

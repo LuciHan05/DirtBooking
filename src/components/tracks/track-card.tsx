@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Image from "next/image";
 import { Star, MapPin } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
+import { TrackImage } from "@/components/tracks/track-image";
 import type { Track } from "@/types";
 import {
   DIFFICULTY_COLORS,
@@ -26,10 +26,9 @@ export function TrackCard({ track, glow = "ktm" }: TrackCardProps) {
         className="group h-full overflow-hidden transition-transform duration-300 hover:-translate-y-1"
       >
         <div className="relative aspect-[16/10] overflow-hidden">
-          <Image
+          <TrackImage
             src={track.images[0]}
             alt={track.name}
-            fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />

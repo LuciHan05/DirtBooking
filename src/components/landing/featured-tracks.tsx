@@ -15,8 +15,10 @@ export function FeaturedTracksSection({
   tracks,
   isLoading = false,
 }: FeaturedTracksSectionProps) {
-  const featured = tracks.filter((t) => t.featured).slice(0, 6);
-  const display = featured.length > 0 ? featured : tracks.slice(0, 6);
+  // Cele mai recent adăugate trasee apar primele (tracks e deja ordonat
+  // după created_at descrescător din store) — un traseu nou trebuie să
+  // fie vizibil imediat pe pagina principală, nu ascuns după cele vechi.
+  const display = tracks.slice(0, 6);
 
   return (
     <section className="px-4 py-20 sm:px-6 lg:px-8">

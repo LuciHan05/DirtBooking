@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   MapPin,
@@ -17,6 +16,7 @@ import { BookingModal } from "@/components/booking/booking-modal";
 import { TrackChat } from "@/components/chat/track-chat";
 import { TrackReviews } from "@/components/tracks/track-reviews";
 import { TrackLocationMap } from "@/components/tracks/track-location-map";
+import { TrackImage } from "@/components/tracks/track-image";
 import { Bike } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
 import { useFleetStore } from "@/stores/fleet-store";
@@ -52,10 +52,9 @@ export function TrackDetailClient({ track }: TrackDetailClientProps) {
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
           <div className="relative aspect-[21/9] overflow-hidden rounded-2xl">
-            <Image
+            <TrackImage
               src={track.images[0]}
               alt={track.name}
-              fill
               className="object-cover"
               priority
               sizes="(max-width: 1024px) 100vw, 66vw"
@@ -127,14 +126,28 @@ export function TrackDetailClient({ track }: TrackDetailClientProps) {
                 {availableBikes.map((bike) => (
                   <div
                     key={bike.id}
-                    className="rounded-xl border border-white/5 bg-white/[3%] p-3"
+                    className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[3%] p-3"
                   >
-                    <p className="font-medium">
-                      {bike.make} {bike.model}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {bike.year} · {formatPrice(bike.hourlyRate)}/oră
-                    </p>
+                    {bike.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={bike.imageUrl}
+                        alt={`${bike.make} ${bike.model}`}
+                        className="size-14 shrink-0 rounded-lg object-cover"
+                      />
+                    ) : (
+                      <div className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-white/5">
+                        <Bike className="size-5 text-muted-foreground" />
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-medium">
+                        {bike.make} {bike.model}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {bike.year} · {formatPrice(bike.hourlyRate)}/oră
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>

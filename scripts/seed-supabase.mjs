@@ -36,11 +36,13 @@ const adminClient = createClient(URL, SERVICE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
+// Poze găzduite local (public/images/tracks) — nu mai depindem de linkuri
+// externe Unsplash care pot pica (404) oricând.
 const IMG = {
-  forest: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800&q=80",
-  trail: "https://images.unsplash.com/photo-1622185131049-4755b415bb02?w=800&q=80",
-  mx: "https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?w=800&q=80",
-  mountains: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80",
+  forest: "/images/tracks/forest.jpg",
+  trail: "/images/tracks/trail.jpg",
+  mx: "/images/tracks/mx.jpg",
+  mountains: "/images/tracks/mountains.jpg",
 };
 
 const HOSTS = [

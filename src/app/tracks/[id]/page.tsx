@@ -12,12 +12,22 @@ export default function TrackDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const record = useTracksStore((s) => s.tracks.find((t) => t.id === id));
+  const hasLoaded = useTracksStore((s) => s.hasLoaded);
   const track = useMemo(
     () => (record ? trackRecordToTrack(record) : undefined),
     [record]
   );
 
-  if (!track) notFound();
+  if (!track) {
+    if (hasLoaded) notFound();
+    return (
+      <MainLayout>
+        <div className="flex min-h-[60vh] items-center justify-center">
+          <div className="size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        </div>
+      </MainLayout>
+    );
+  }
 
   return (
     <MainLayout>

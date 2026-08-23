@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Upload, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -13,8 +13,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useAuthStore } from "@/stores/auth-store";
 import { useFleetStore } from "@/stores/fleet-store";
+import { createClient } from "@/lib/supabase/client";
 import type { FleetBikeRecord } from "@/lib/db/schema";
 
 interface FleetBikeDialogProps {
@@ -38,7 +46,32 @@ export function FleetBikeDialog({ open, onOpenChange, bike }: FleetBikeDialogPro
   const [status, setStatus] = useState<FleetBikeRecord["status"]>(
     bike?.status ?? "available"
   );
+  const [imageUrl, setImageUrl] = useState<string | undefined>(bike?.imageUrl);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState("");
   const isEditing = Boolean(bike);
+
+  async function handleImageAdd(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setImageError("");
+    setUploadingImage(true);
+    const supabase = createClient();
+    const path = `fleet/${user.id}/${Date.now()}-${file.name}`;
+    const { error } = await supabase.storage
+      .from("track-images")
+      .upload(path, file);
+    if (error) {
+      setImageError("Încărcarea imaginii a eșuat.");
+      setUploadingImage(false);
+      e.target.value = "";
+      return;
+    }
+    const { data } = supabase.storage.from("track-images").getPublicUrl(path);
+    setImageUrl(data.publicUrl);
+    setUploadingImage(false);
+    e.target.value = "";
+  }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -51,6 +84,7 @@ export function FleetBikeDialog({ open, onOpenChange, bike }: FleetBikeDialogPro
       year: Number(form.get("year")),
       hourlyRate: Number(form.get("hourlyRate")),
       status,
+      imageUrl,
     };
 
     startTransition(async () => {
@@ -80,6 +114,48 @@ export function FleetBikeDialog({ open, onOpenChange, bike }: FleetBikeDialogPro
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label>Poză</Label>
+            {imageUrl ? (
+              <div className="relative h-32 w-full overflow-hidden rounded-lg">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={imageUrl} alt="" className="size-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => setImageUrl(undefined)}
+                  className="absolute top-1.5 right-1.5 rounded-full bg-black/60 p-1"
+                  aria-label="Șterge poza"
+                >
+                  <X className="size-3.5" />
+                </button>
+              </div>
+            ) : (
+              <>
+                <Label
+                  htmlFor="bike-image-upload"
+                  className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-white/20 p-4 text-sm text-muted-foreground hover:border-primary/30 aria-disabled:pointer-events-none aria-disabled:opacity-50"
+                  aria-disabled={uploadingImage}
+                >
+                  {uploadingImage ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Upload className="size-4" />
+                  )}
+                  {uploadingImage ? "Se încarcă..." : "Încarcă poză"}
+                </Label>
+                <input
+                  id="bike-image-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  disabled={uploadingImage}
+                  onChange={handleImageAdd}
+                />
+              </>
+            )}
+            {imageError && <p className="text-sm text-destructive">{imageError}</p>}
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="make">Marcă</Label>
@@ -119,18 +195,21 @@ export function FleetBikeDialog({ open, onOpenChange, bike }: FleetBikeDialogPro
           </div>
           <div className="space-y-2">
             <Label htmlFor="status">Stare</Label>
-            <select
-              id="status"
+            <Select
               value={status}
-              onChange={(e) => setStatus(e.target.value as FleetBikeRecord["status"])}
-              className="flex h-8 w-full rounded-lg border border-input bg-input/30 px-2.5 text-sm"
+              onValueChange={(v) => setStatus(v as FleetBikeRecord["status"])}
             >
-              {STATUS_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger id="status" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {error && <p className="text-sm text-destructive">{error}</p>}
@@ -139,7 +218,7 @@ export function FleetBikeDialog({ open, onOpenChange, bike }: FleetBikeDialogPro
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Anulează
             </Button>
-            <Button type="submit" className="glow-ktm" disabled={pending}>
+            <Button type="submit" className="glow-ktm" disabled={pending || uploadingImage}>
               {pending ? (
                 <>
                   <Loader2 className="size-4 animate-spin" />

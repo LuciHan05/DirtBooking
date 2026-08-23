@@ -8,6 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { GlassCard } from "@/components/ui/glass-card";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { AMENITY_OPTIONS, BOOKING_TIME_SLOTS } from "@/lib/constants";
@@ -17,6 +24,7 @@ import { useTracksStore } from "@/stores/tracks-store";
 import { createClient } from "@/lib/supabase/client";
 import { LocationPickerLoader } from "@/components/map/location-picker-loader";
 import type { TrackDifficulty, SoilCondition } from "@/types";
+import type { TrackRecord } from "@/lib/db/schema";
 
 const DEFAULT_LAT = 45.9432;
 const DEFAULT_LNG = 24.9668;
@@ -26,14 +34,49 @@ interface AddTrackFormProps {
   trackId?: string;
 }
 
+/**
+ * Așteaptă încărcarea traseelor din Supabase înainte de a monta formularul
+ * propriu-zis — altfel, la accesare directă/refresh a paginii de editare,
+ * câmpurile s-ar inițializa goale (traseul încă nu ajunsese în store).
+ */
 export function AddTrackForm({ trackId }: AddTrackFormProps) {
+  const hasLoaded = useTracksStore((s) => s.hasLoaded);
+  const record = useTracksStore((s) =>
+    trackId ? s.tracks.find((t) => t.id === trackId) : undefined
+  );
+
+  if (trackId && !hasLoaded) {
+    return (
+      <div className="flex flex-1 items-center justify-center p-6">
+        <div className="size-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (trackId && hasLoaded && !record) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-2 p-6 text-center">
+        <p className="font-heading text-lg font-semibold">Traseul nu a fost găsit</p>
+        <p className="text-sm text-muted-foreground">
+          Poate a fost șters sau linkul e greșit.
+        </p>
+      </div>
+    );
+  }
+
+  return <AddTrackFormInner key={record?.id ?? "new"} trackId={trackId} record={record} />;
+}
+
+interface AddTrackFormInnerProps {
+  trackId?: string;
+  record?: TrackRecord;
+}
+
+function AddTrackFormInner({ trackId, record }: AddTrackFormInnerProps) {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const addTrack = useTracksStore((s) => s.addTrack);
   const updateTrack = useTracksStore((s) => s.updateTrack);
-  const record = useTracksStore((s) =>
-    trackId ? s.tracks.find((t) => t.id === trackId) : undefined
-  );
   const isEditing = Boolean(trackId);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
@@ -242,44 +285,46 @@ export function AddTrackForm({ trackId }: AddTrackFormProps) {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="difficulty">Dificultate</Label>
-                <select
-                  id="difficulty"
+                <Select
                   value={difficulty}
-                  onChange={(e) =>
-                    setDifficulty(e.target.value as TrackDifficulty)
-                  }
-                  className="flex h-8 w-full rounded-lg border border-input bg-input/30 px-2.5 text-sm"
+                  onValueChange={(v) => setDifficulty(v as TrackDifficulty)}
                 >
-                  {(
-                    Object.entries(DIFFICULTY_LABELS) as [
-                      TrackDifficulty,
-                      string,
-                    ][]
-                  ).map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger id="difficulty" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(
+                      Object.entries(DIFFICULTY_LABELS) as [
+                        TrackDifficulty,
+                        string,
+                      ][]
+                    ).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="soil">Condiție teren</Label>
-                <select
-                  id="soil"
+                <Select
                   value={soilCondition}
-                  onChange={(e) =>
-                    setSoilCondition(e.target.value as SoilCondition)
-                  }
-                  className="flex h-8 w-full rounded-lg border border-input bg-input/30 px-2.5 text-sm"
+                  onValueChange={(v) => setSoilCondition(v as SoilCondition)}
                 >
-                  {(
-                    Object.entries(SOIL_LABELS) as [SoilCondition, string][]
-                  ).map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger id="soil" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(
+                      Object.entries(SOIL_LABELS) as [SoilCondition, string][]
+                    ).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

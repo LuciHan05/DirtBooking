@@ -95,6 +95,7 @@ export interface FleetBikeRecord {
   year: number;
   status: "available" | "rented" | "maintenance";
   hourlyRate: number;
+  imageUrl?: string;
 }
 
 export interface ReviewRecord {

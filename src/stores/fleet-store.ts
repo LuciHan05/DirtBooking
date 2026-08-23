@@ -10,6 +10,7 @@ interface CreateFleetBikeInput {
   year: number;
   hourlyRate: number;
   status: FleetBikeRecord["status"];
+  imageUrl?: string;
 }
 
 type UpdateFleetBikeInput = Omit<CreateFleetBikeInput, "hostId">;
@@ -37,6 +38,7 @@ function recordFromDb(b: DbFleetBike): FleetBikeRecord {
     year: b.year,
     status: b.status,
     hourlyRate: b.hourly_rate,
+    imageUrl: b.image_url ?? undefined,
   };
 }
 
@@ -75,6 +77,7 @@ export const useFleetStore = create<FleetState>()((set, get) => ({
       year: input.year,
       hourly_rate: input.hourlyRate,
       status: input.status,
+      image_url: input.imageUrl ?? null,
     });
     if (error) return { error: error.message };
     await get().fetchFleet();
@@ -91,6 +94,7 @@ export const useFleetStore = create<FleetState>()((set, get) => ({
         year: input.year,
         hourly_rate: input.hourlyRate,
         status: input.status,
+        ...(input.imageUrl ? { image_url: input.imageUrl } : {}),
       })
       .eq("id", id);
     if (error) return { error: error.message };

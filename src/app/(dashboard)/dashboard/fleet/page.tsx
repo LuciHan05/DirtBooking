@@ -10,6 +10,7 @@ import { FleetBikeDialog } from "@/components/dashboard/fleet-bike-dialog";
 import { useAuthStore } from "@/stores/auth-store";
 import { useFleetStore } from "@/stores/fleet-store";
 import { formatPrice } from "@/lib/format";
+import { cn } from "@/lib/utils";
 import type { FleetBikeRecord } from "@/lib/db/schema";
 
 const statusLabels = {
@@ -76,14 +77,27 @@ export default function FleetPage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {fleet.map((bike) => (
-              <GlassCard key={bike.id} className="p-6">
-                <div className="flex items-start justify-between">
-                  <Wrench className="size-6 text-muted-foreground" />
-                  <Badge variant="outline" className={statusColors[bike.status]}>
+              <GlassCard key={bike.id} className="overflow-hidden">
+                <div className="relative flex aspect-video items-center justify-center bg-white/[3%]">
+                  {bike.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={bike.imageUrl}
+                      alt={`${bike.make} ${bike.model}`}
+                      className="size-full object-cover"
+                    />
+                  ) : (
+                    <Wrench className="size-8 text-muted-foreground" />
+                  )}
+                  <Badge
+                    variant="outline"
+                    className={cn("absolute top-2 right-2 bg-background/80", statusColors[bike.status])}
+                  >
                     {statusLabels[bike.status]}
                   </Badge>
                 </div>
-                <h3 className="mt-3 font-heading text-lg font-semibold">
+                <div className="p-6">
+                <h3 className="font-heading text-lg font-semibold">
                   {bike.make} {bike.model}
                 </h3>
                 <p className="text-sm text-muted-foreground">
@@ -107,6 +121,7 @@ export default function FleetPage() {
                   >
                     <Trash2 className="size-3.5" />
                   </Button>
+                </div>
                 </div>
               </GlassCard>
             ))}
