@@ -6,37 +6,37 @@ import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useAuthStore } from "@/stores/auth-store";
+import { createClient } from "@/lib/supabase/client";
 
 export function ForgotPasswordForm() {
-  const credentials = useAuthStore((s) => s.credentials);
   const [pending, startTransition] = useTransition();
   const [sent, setSent] = useState(false);
   const [email, setEmail] = useState("");
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    startTransition(() => {
-      setTimeout(() => setSent(true), 500);
+    startTransition(async () => {
+      const supabase = createClient();
+      // Nu dezvăluim dacă emailul există sau nu — comportament standard de securitate.
+      await supabase.auth
+        .resetPasswordForEmail(email, {
+          redirectTo:
+            typeof window !== "undefined"
+              ? `${window.location.origin}/login`
+              : undefined,
+        })
+        .catch(() => {});
+      setSent(true);
     });
   }
-
-  const exists = credentials.some(
-    (c) => c.email.toLowerCase() === email.toLowerCase()
-  );
 
   if (sent) {
     return (
       <div className="space-y-4 text-center">
         <CheckCircle2 className="mx-auto size-12 text-kawasaki" />
         <p className="text-sm text-muted-foreground">
-          {exists
-            ? `Am trimis un link de resetare la ${email}. Verifică-ți inboxul.`
-            : `Dacă există un cont cu adresa ${email}, vei primi un email cu instrucțiuni.`}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Notă: aceasta e o platformă demo — funcționează 100% local, fără
-          server de email real.
+          Dacă există un cont cu adresa {email}, vei primi un email cu
+          instrucțiuni de resetare.
         </p>
         <Link href="/login" className="block text-sm text-primary hover:underline">
           Înapoi la autentificare

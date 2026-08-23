@@ -10,9 +10,10 @@ import {
 
 export function FeaturedTracksLoader() {
   const tracks = useTracksStore((s) => s.tracks);
+  const hasLoaded = useTracksStore((s) => s.hasLoaded);
   const derived = useMemo(
     () => filterTrackRecords(tracks).map(trackRecordToTrack),
     [tracks]
   );
-  return <FeaturedTracksSection tracks={derived} />;
+  return <FeaturedTracksSection tracks={derived} isLoading={!hasLoaded} />;
 }

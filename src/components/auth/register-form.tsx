@@ -31,8 +31,8 @@ export function RegisterForm() {
       return;
     }
     const form = new FormData(e.currentTarget);
-    startTransition(() => {
-      const result = register({
+    startTransition(async () => {
+      const result = await register({
         email: form.get("email") as string,
         password: form.get("password") as string,
         name: form.get("name") as string,

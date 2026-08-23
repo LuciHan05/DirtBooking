@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/auth-store";
 import { useTracksStore } from "@/stores/tracks-store";
 import { useBookingsStore } from "@/stores/bookings-store";
-import { SEED_FLEET } from "@/lib/db/seed";
+import { useFleetStore } from "@/stores/fleet-store";
 import { getWeeklyBuckets } from "@/lib/analytics";
 import { formatPrice, BOOKING_STATUS_LABELS } from "@/lib/format";
 
@@ -26,7 +26,8 @@ export function HostDashboard() {
     () => bookingsRecords.filter((b) => hostTracks.some((t) => t.id === b.trackId)),
     [bookingsRecords, hostTracks]
   );
-  const fleet = SEED_FLEET.filter((b) => b.hostId === user?.id);
+  const fleetRecords = useFleetStore((s) => s.fleet);
+  const fleet = fleetRecords.filter((b) => b.hostId === user?.id);
 
   const weeklyBuckets = useMemo(() => getWeeklyBuckets(bookings, 4), [bookings]);
   const monthlyRevenue = weeklyBuckets.reduce((sum, w) => sum + w.revenue, 0);

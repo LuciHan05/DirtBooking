@@ -30,7 +30,9 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const isDashboard = request.nextUrl.pathname.startsWith("/dashboard");
-  const isAddTrack = request.nextUrl.pathname.startsWith("/dashboard/listings/new");
+  const isHostOnlyTrackRoute =
+    request.nextUrl.pathname.startsWith("/dashboard/listings/new") ||
+    /^\/dashboard\/listings\/.+\/edit$/.test(request.nextUrl.pathname);
 
   if (isDashboard && !user) {
     const url = request.nextUrl.clone();
@@ -39,7 +41,7 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (isAddTrack && user) {
+  if (isHostOnlyTrackRoute && user) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")

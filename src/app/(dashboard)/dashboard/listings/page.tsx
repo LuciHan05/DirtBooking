@@ -18,9 +18,9 @@ export default function ListingsPage() {
     ? allTracks.filter((t) => t.hostId === user.id)
     : [];
 
-  function handleDelete(id: string, title: string) {
+  async function handleDelete(id: string, title: string) {
     if (window.confirm(`Ștergi traseul „${title}"? Această acțiune nu poate fi anulată.`)) {
-      deleteTrack(id);
+      await deleteTrack(id);
     }
   }
 

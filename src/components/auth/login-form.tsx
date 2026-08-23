@@ -22,8 +22,8 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
     const email = form.get("email") as string;
     const password = form.get("password") as string;
 
-    startTransition(() => {
-      const result = login(email, password);
+    startTransition(async () => {
+      const result = await login(email, password);
       if (result.error) {
         setError(result.error);
       } else {

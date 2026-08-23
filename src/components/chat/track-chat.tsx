@@ -19,15 +19,25 @@ export function TrackChat({ trackId, hostId, hostName }: TrackChatProps) {
   const user = useAuthStore((s) => s.user);
   const send = useMessagesStore((s) => s.send);
   const getConversation = useMessagesStore((s) => s.getConversation);
+  const fetchMessages = useMessagesStore((s) => s.fetchMessages);
+  const subscribeRealtime = useMessagesStore((s) => s.subscribeRealtime);
   const messageRecords = useMessagesStore((s) => s.messages);
+  const hasLoaded = useMessagesStore((s) => s.hasLoaded);
   const messages = useMemo(
     () =>
       user ? getConversation(user.id, hostId, trackId) : [],
     [getConversation, messageRecords, user, hostId, trackId]
   );
   const [content, setContent] = useState("");
+  const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
   const bottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    if (!hasLoaded) fetchMessages();
+    subscribeRealtime(user.id);
+  }, [user, hasLoaded, fetchMessages, subscribeRealtime]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -36,14 +46,16 @@ export function TrackChat({ trackId, hostId, hostName }: TrackChatProps) {
   function handleSend(e: React.FormEvent) {
     e.preventDefault();
     if (!content.trim() || !user) return;
-    startTransition(() => {
-      send({
+    setError("");
+    startTransition(async () => {
+      const result = await send({
         trackId,
         senderId: user.id,
         receiverId: hostId,
         content,
       });
-      setContent("");
+      if (result.error) setError(result.error);
+      else setContent("");
     });
   }
 
@@ -97,6 +109,12 @@ export function TrackChat({ trackId, hostId, hostName }: TrackChatProps) {
         )}
         <div ref={bottomRef} />
       </div>
+
+      {error && (
+        <p className="border-t border-white/5 px-4 py-2 text-xs text-destructive">
+          {error}
+        </p>
+      )}
 
       <form
         onSubmit={handleSend}

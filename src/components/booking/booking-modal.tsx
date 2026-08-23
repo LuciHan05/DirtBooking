@@ -51,13 +51,13 @@ export function BookingModal({ track, open, onOpenChange }: BookingModalProps) {
   function handleConfirm() {
     if (!canConfirm || !signature || !user) return;
     setError("");
-    startTransition(() => {
-      const slotOk = bookSlot(track.id, selectedDate, selectedTime);
+    startTransition(async () => {
+      const slotOk = await bookSlot(track.id, selectedDate, selectedTime);
       if (!slotOk) {
         setError("Slotul nu mai este disponibil.");
         return;
       }
-      createBooking({
+      const result = await createBooking({
         trackId: track.id,
         trackName: track.name,
         riderId: user.id,
@@ -67,6 +67,10 @@ export function BookingModal({ track, open, onOpenChange }: BookingModalProps) {
         totalPrice: track.pricePerSession,
         signatureData: signature,
       });
+      if (!result.success) {
+        setError(result.error ?? "Eroare la crearea rezervării.");
+        return;
+      }
       onOpenChange(false);
       router.push("/dashboard/bookings");
     });

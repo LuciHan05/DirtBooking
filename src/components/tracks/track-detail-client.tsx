@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -16,7 +16,10 @@ import { Button } from "@/components/ui/button";
 import { BookingModal } from "@/components/booking/booking-modal";
 import { TrackChat } from "@/components/chat/track-chat";
 import { TrackReviews } from "@/components/tracks/track-reviews";
+import { TrackLocationMap } from "@/components/tracks/track-location-map";
+import { Bike } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
+import { useFleetStore } from "@/stores/fleet-store";
 import {
   DIFFICULTY_COLORS,
   DIFFICULTY_LABELS,
@@ -35,6 +38,14 @@ export function TrackDetailClient({ track }: TrackDetailClientProps) {
   const { isAuthenticated } = useAuthStore();
   const [bookingOpen, setBookingOpen] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const fleetRecords = useFleetStore((s) => s.fleet);
+  const availableBikes = useMemo(
+    () =>
+      fleetRecords.filter(
+        (b) => b.hostId === track.hostId && b.status === "available"
+      ),
+    [fleetRecords, track.hostId]
+  );
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -105,6 +116,36 @@ export function TrackDetailClient({ track }: TrackDetailClientProps) {
               </div>
             </GlassCard>
           )}
+
+          {availableBikes.length > 0 && (
+            <GlassCard className="p-6">
+              <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-semibold">
+                <Bike className="size-5 text-yamaha" />
+                Motociclete disponibile de închiriat
+              </h2>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {availableBikes.map((bike) => (
+                  <div
+                    key={bike.id}
+                    className="rounded-xl border border-white/5 bg-white/[3%] p-3"
+                  >
+                    <p className="font-medium">
+                      {bike.make} {bike.model}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {bike.year} · {formatPrice(bike.hourlyRate)}/oră
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </GlassCard>
+          )}
+
+          <GlassCard className="overflow-hidden p-0">
+            <div className="h-64">
+              <TrackLocationMap lat={track.location.lat} lng={track.location.lng} />
+            </div>
+          </GlassCard>
 
           {showChat && (
             <TrackChat

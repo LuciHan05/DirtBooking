@@ -64,7 +64,9 @@ export interface MessageRecord {
   id: string;
   trackId: string;
   senderId: string;
+  senderName?: string;
   receiverId: string;
+  receiverName?: string;
   content: string;
   read: boolean;
   createdAt: string;

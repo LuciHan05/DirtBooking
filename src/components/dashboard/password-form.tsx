@@ -18,7 +18,8 @@ export function PasswordForm() {
     e.preventDefault();
     setError("");
     setSaved(false);
-    const form = new FormData(e.currentTarget);
+    const formEl = e.currentTarget;
+    const form = new FormData(formEl);
     const current = form.get("current") as string;
     const next = form.get("next") as string;
     const confirm = form.get("confirm") as string;
@@ -32,13 +33,13 @@ export function PasswordForm() {
       return;
     }
 
-    startTransition(() => {
-      const result = changePassword(current, next);
+    startTransition(async () => {
+      const result = await changePassword(current, next);
       if (result.error) {
         setError(result.error);
       } else {
         setSaved(true);
-        e.currentTarget.reset();
+        formEl.reset();
       }
     });
   }

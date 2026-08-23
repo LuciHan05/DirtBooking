@@ -14,7 +14,6 @@ import { useAuthStore } from "@/stores/auth-store";
 import { useMessagesStore } from "@/stores/messages-store";
 import { useBookingsStore } from "@/stores/bookings-store";
 import { useTracksStore } from "@/stores/tracks-store";
-import { SEED_PROFILES } from "@/lib/db/seed";
 import { formatDateTime } from "@/lib/format";
 
 interface NotificationItem {
@@ -40,11 +39,10 @@ export function NotificationsPopover() {
       (m) => m.receiverId === user.id && !m.read
     );
     for (const msg of unread) {
-      const sender = SEED_PROFILES.find((p) => p.id === msg.senderId);
       items.push({
         id: `msg-${msg.id}`,
         icon: MessageSquare,
-        title: `Mesaj nou de la ${sender?.name ?? "Utilizator"}`,
+        title: `Mesaj nou de la ${msg.senderName ?? "Utilizator"}`,
         description: msg.content,
         href: "/dashboard/messages",
         time: msg.createdAt,

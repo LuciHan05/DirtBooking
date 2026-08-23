@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { Loader2, Send } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { GlassCard } from "@/components/ui/glass-card";
@@ -8,20 +8,28 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/stores/auth-store";
 import { useMessagesStore } from "@/stores/messages-store";
-import { SEED_PROFILES } from "@/lib/db/seed";
 import { formatDateTime } from "@/lib/format";
 
 export default function MessagesPage() {
   const user = useAuthStore((s) => s.user);
   const send = useMessagesStore((s) => s.send);
+  const fetchMessages = useMessagesStore((s) => s.fetchMessages);
+  const subscribeRealtime = useMessagesStore((s) => s.subscribeRealtime);
+  const hasLoaded = useMessagesStore((s) => s.hasLoaded);
+  // Subscribe to the messages array so this page re-renders on new/realtime messages.
+  useMessagesStore((s) => s.messages);
   const getConversationsForUser = useMessagesStore(
     (s) => s.getConversationsForUser
   );
   const getConversation = useMessagesStore((s) => s.getConversation);
 
-  const conversations = user
-    ? getConversationsForUser(user.id, SEED_PROFILES)
-    : [];
+  useEffect(() => {
+    if (!user) return;
+    if (!hasLoaded) fetchMessages();
+    subscribeRealtime(user.id);
+  }, [user, hasLoaded, fetchMessages, subscribeRealtime]);
+
+  const conversations = user ? getConversationsForUser(user.id) : [];
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeTrackId, setActiveTrackId] = useState<string>("");
@@ -41,14 +49,14 @@ export default function MessagesPage() {
   function handleSend(e: React.FormEvent) {
     e.preventDefault();
     if (!activeId || !content.trim() || !user || !activeTrackId) return;
-    startTransition(() => {
-      send({
+    startTransition(async () => {
+      const result = await send({
         trackId: activeTrackId,
         senderId: user.id,
         receiverId: activeId,
         content,
       });
-      setContent("");
+      if (!result.error) setContent("");
     });
   }
 

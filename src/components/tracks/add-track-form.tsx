@@ -14,7 +14,12 @@ import { AMENITY_OPTIONS, BOOKING_TIME_SLOTS } from "@/lib/constants";
 import { DIFFICULTY_LABELS, SOIL_LABELS } from "@/lib/format";
 import { useAuthStore } from "@/stores/auth-store";
 import { useTracksStore } from "@/stores/tracks-store";
+import { createClient } from "@/lib/supabase/client";
+import { LocationPickerLoader } from "@/components/map/location-picker-loader";
 import type { TrackDifficulty, SoilCondition } from "@/types";
+
+const DEFAULT_LAT = 45.9432;
+const DEFAULT_LNG = 24.9668;
 
 interface AddTrackFormProps {
   /** Când e prezent, formularul editează traseul existent în loc să creeze unul nou. */
@@ -42,15 +47,35 @@ export function AddTrackForm({ trackId }: AddTrackFormProps) {
   const [soilCondition, setSoilCondition] = useState<SoilCondition>(
     record?.soilCondition ?? "prime"
   );
+  const [lat, setLat] = useState(record?.lat ?? DEFAULT_LAT);
+  const [lng, setLng] = useState(record?.lng ?? DEFAULT_LNG);
+  const [locationPicked, setLocationPicked] = useState(Boolean(record));
   const [slotDate, setSlotDate] = useState("");
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [slots, setSlots] = useState<{ date: string; times: string[] }[]>([]);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState("");
 
-  function handleImageAdd(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleImageAdd(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    setImages((prev) => [...prev, url]);
+    if (!file || !user) return;
+    setImageError("");
+    setUploadingImage(true);
+    const supabase = createClient();
+    const path = `${user.id}/${Date.now()}-${file.name}`;
+    const { error } = await supabase.storage
+      .from("track-images")
+      .upload(path, file);
+    if (error) {
+      setImageError("Încărcarea imaginii a eșuat.");
+      setUploadingImage(false);
+      e.target.value = "";
+      return;
+    }
+    const { data } = supabase.storage.from("track-images").getPublicUrl(path);
+    setImages((prev) => [...prev, data.publicUrl]);
+    setUploadingImage(false);
+    e.target.value = "";
   }
 
   function toggleAmenity(amenity: string) {
@@ -74,6 +99,10 @@ export function AddTrackForm({ trackId }: AddTrackFormProps) {
       setError("Doar proprietarii pot adăuga trasee.");
       return;
     }
+    if (!locationPicked) {
+      setError("Alege locația traseului pe hartă.");
+      return;
+    }
     setError("");
     const form = new FormData(e.currentTarget);
 
@@ -83,6 +112,8 @@ export function AddTrackForm({ trackId }: AddTrackFormProps) {
       city: form.get("city") as string,
       county: form.get("county") as string,
       address: (form.get("address") as string) || "",
+      lat,
+      lng,
       pricePerSession: Number(form.get("price")),
       difficulty,
       amenities,
@@ -90,18 +121,26 @@ export function AddTrackForm({ trackId }: AddTrackFormProps) {
       images,
     };
 
-    startTransition(() => {
+    startTransition(async () => {
       if (isEditing && trackId) {
-        updateTrack(trackId, base);
+        const result = await updateTrack(trackId, base);
+        if (result.error) {
+          setError(result.error);
+          return;
+        }
         router.push(`/tracks/${trackId}`);
       } else {
-        const newId = addTrack({
+        const result = await addTrack({
           ...base,
           hostId: user.id,
           hostName: user.name,
           slots,
         });
-        router.push(`/tracks/${newId}`);
+        if (result.error || !result.id) {
+          setError(result.error ?? "Eroare la publicarea traseului.");
+          return;
+        }
+        router.push(`/tracks/${result.id}`);
       }
     });
   }
@@ -156,6 +195,36 @@ export function AddTrackForm({ trackId }: AddTrackFormProps) {
             <div className="space-y-2">
               <Label htmlFor="address">Adresă</Label>
               <Input id="address" name="address" placeholder="DJ177, Iacobeni" defaultValue={record?.address} />
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>Locație pe hartă</Label>
+                {locationPicked && (
+                  <span className="text-xs text-muted-foreground">
+                    {lat.toFixed(4)}, {lng.toFixed(4)}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Dă click pe hartă (sau trage marcatorul) ca să indici locația
+                exactă a traseului.
+              </p>
+              <div className="h-64 overflow-hidden rounded-xl border border-white/10">
+                <LocationPickerLoader
+                  lat={lat}
+                  lng={lng}
+                  zoom={locationPicked ? 12 : 7}
+                  onChange={(newLat, newLng) => {
+                    setLat(newLat);
+                    setLng(newLng);
+                    setLocationPicked(true);
+                  }}
+                />
+              </div>
+              {!locationPicked && (
+                <p className="text-xs text-ktm">Locația nu a fost aleasă încă.</p>
+              )}
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -254,18 +323,27 @@ export function AddTrackForm({ trackId }: AddTrackFormProps) {
               </div>
               <Label
                 htmlFor="image-upload"
-                className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-white/20 p-4 text-sm text-muted-foreground hover:border-primary/30"
+                className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-white/20 p-4 text-sm text-muted-foreground hover:border-primary/30 aria-disabled:pointer-events-none aria-disabled:opacity-50"
+                aria-disabled={uploadingImage}
               >
-                <Upload className="size-4" />
-                Încarcă imagine (local)
+                {uploadingImage ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Upload className="size-4" />
+                )}
+                {uploadingImage ? "Se încarcă..." : "Încarcă imagine"}
               </Label>
               <input
                 id="image-upload"
                 type="file"
                 accept="image/*"
                 className="hidden"
+                disabled={uploadingImage}
                 onChange={handleImageAdd}
               />
+              {imageError && (
+                <p className="text-sm text-destructive">{imageError}</p>
+              )}
             </div>
 
             {isEditing ? (

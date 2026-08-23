@@ -16,6 +16,7 @@ export function ProfileForm() {
   const [avatarUrl, setAvatarUrl] = useState(user?.avatarUrl ?? "");
   const [pending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState("");
 
   if (!user) return null;
 
@@ -29,9 +30,14 @@ export function ProfileForm() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaved(false);
-    startTransition(() => {
-      updateProfile({ name: name.trim(), avatarUrl: avatarUrl.trim() || undefined });
-      setSaved(true);
+    setError("");
+    startTransition(async () => {
+      const result = await updateProfile({
+        name: name.trim(),
+        avatarUrl: avatarUrl.trim() || undefined,
+      });
+      if (result.error) setError(result.error);
+      else setSaved(true);
     });
   }
 
@@ -78,6 +84,8 @@ export function ProfileForm() {
             placeholder="https://..."
           />
         </div>
+
+        {error && <p className="text-sm text-destructive">{error}</p>}
 
         <div className="flex items-center gap-3">
           <Button type="submit" className="glow-ktm" disabled={pending}>

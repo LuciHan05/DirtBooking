@@ -1,11 +1,13 @@
 "use client";
 
 import { useAuthStore } from "@/stores/auth-store";
+import { useBookingsStore } from "@/stores/bookings-store";
+import { useMessagesStore } from "@/stores/messages-store";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, _hasHydrated } = useAuthStore();
+  const { user, isAuthenticated, _hasHydrated } = useAuthStore();
   const router = useRouter();
 
   useEffect(() => {
@@ -13,6 +15,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       router.replace("/login?redirect=/dashboard");
     }
   }, [_hasHydrated, isAuthenticated, router]);
+
+  useEffect(() => {
+    if (_hasHydrated && isAuthenticated && user) {
+      useBookingsStore.getState().fetchBookings();
+      useMessagesStore.getState().fetchMessages();
+      useMessagesStore.getState().subscribeRealtime(user.id);
+    }
+  }, [_hasHydrated, isAuthenticated, user]);
 
   if (!_hasHydrated) {
     return (

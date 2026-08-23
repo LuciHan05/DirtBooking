@@ -25,6 +25,7 @@ function TracksList({
   filters: TrackFiltersState;
 }) {
   const records = useTracksStore((s) => s.tracks);
+  const hasLoaded = useTracksStore((s) => s.hasLoaded);
   const tracks = useMemo(() => {
     let result = filterTrackRecords(records, location || undefined).map(
       trackRecordToTrack
@@ -41,6 +42,16 @@ function TracksList({
     }
     return result;
   }, [records, location, filters]);
+
+  if (!hasLoaded) {
+    return (
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="aspect-[4/5] animate-pulse rounded-2xl bg-white/5" />
+        ))}
+      </div>
+    );
+  }
 
   if (tracks.length === 0) {
     return (

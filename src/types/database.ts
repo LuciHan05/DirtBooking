@@ -52,6 +52,18 @@ export interface DbBooking {
   total_price: number;
   created_at: string;
   tracks?: { title: string } | null;
+  profiles?: { name: string } | null;
+}
+
+export interface DbFleetBike {
+  id: string;
+  host_id: string;
+  make: string;
+  model: string;
+  year: number;
+  status: "available" | "rented" | "maintenance";
+  hourly_rate: number;
+  created_at: string;
 }
 
 export interface DbMessage {
@@ -62,4 +74,6 @@ export interface DbMessage {
   content: string;
   read: boolean;
   created_at: string;
+  sender?: { name: string } | null;
+  receiver?: { name: string } | null;
 }

@@ -8,9 +8,13 @@ const glows = ["ktm", "yamaha", "kawasaki", "ktm", "yamaha"] as const;
 
 interface FeaturedTracksSectionProps {
   tracks: Track[];
+  isLoading?: boolean;
 }
 
-export function FeaturedTracksSection({ tracks }: FeaturedTracksSectionProps) {
+export function FeaturedTracksSection({
+  tracks,
+  isLoading = false,
+}: FeaturedTracksSectionProps) {
   const featured = tracks.filter((t) => t.featured).slice(0, 6);
   const display = featured.length > 0 ? featured : tracks.slice(0, 6);
 
@@ -38,7 +42,13 @@ export function FeaturedTracksSection({ tracks }: FeaturedTracksSectionProps) {
           </Link>
         </div>
 
-        {display.length === 0 ? (
+        {isLoading ? (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="aspect-[4/5] animate-pulse rounded-2xl bg-white/5" />
+            ))}
+          </div>
+        ) : display.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/10 p-12 text-center">
             <p className="text-muted-foreground">
               Încă nu există trasee listate. Fii primul proprietar care adaugă
