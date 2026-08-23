@@ -19,6 +19,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (_hasHydrated && isAuthenticated && user) {
       useBookingsStore.getState().fetchBookings();
+      useBookingsStore.getState().subscribeRealtime();
       useMessagesStore.getState().fetchMessages();
       useMessagesStore.getState().subscribeRealtime(user.id);
     }

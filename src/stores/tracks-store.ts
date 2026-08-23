@@ -44,6 +44,15 @@ interface TracksState {
   ) => Promise<{ error?: string }>;
   deleteTrack: (id: string) => Promise<{ error?: string }>;
   bookSlot: (trackId: string, date: string, time: string) => Promise<boolean>;
+  addSlots: (
+    trackId: string,
+    slots: { date: string; times: string[] }[]
+  ) => Promise<{ error?: string }>;
+  removeSlot: (
+    trackId: string,
+    date: string,
+    time: string
+  ) => Promise<{ error?: string }>;
   applyReview: (trackId: string, rating: number) => void;
 }
 
@@ -216,6 +225,35 @@ export const useTracksStore = create<TracksState>()((set, get) => ({
       }));
     }
     return Boolean(data);
+  },
+
+  addSlots: async (trackId, slots) => {
+    const supabase = createClient();
+    const rows = slots.flatMap((s) =>
+      s.times.map((time) => ({
+        track_id: trackId,
+        slot_date: s.date,
+        time_slot: time,
+      }))
+    );
+    const { error } = await supabase.from("track_slots").insert(rows);
+    if (error) return { error: error.message };
+    await get().fetchTracks();
+    return {};
+  },
+
+  removeSlot: async (trackId, date, time) => {
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("track_slots")
+      .delete()
+      .eq("track_id", trackId)
+      .eq("slot_date", date)
+      .eq("time_slot", time)
+      .eq("is_booked", false);
+    if (error) return { error: error.message };
+    await get().fetchTracks();
+    return {};
   },
 
   applyReview: (trackId, rating) => {

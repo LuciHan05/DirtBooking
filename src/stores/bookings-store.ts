@@ -1,7 +1,10 @@
 import { create } from "zustand";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import type { BookingRecord } from "@/lib/db/schema";
 import type { DbBooking } from "@/types/database";
+
+let realtimeChannel: RealtimeChannel | null = null;
 
 interface CreateBookingInput {
   trackId: string;
@@ -19,6 +22,8 @@ interface BookingsState {
   isLoading: boolean;
   hasLoaded: boolean;
   fetchBookings: () => Promise<void>;
+  subscribeRealtime: () => void;
+  unsubscribeRealtime: () => void;
   create: (input: CreateBookingInput) => Promise<{ success: boolean; error?: string }>;
   getForRider: (riderId: string) => BookingRecord[];
   getForHost: (hostId: string, trackIds: string[]) => BookingRecord[];
@@ -65,6 +70,38 @@ export const useBookingsStore = create<BookingsState>()((set, get) => ({
 
     const bookings = (data as unknown as DbBooking[]).map(recordFromDb);
     set({ bookings, isLoading: false, hasLoaded: true });
+  },
+
+  /**
+   * RLS scopează deja ce vede fiecare (propriile rezervări sau cele de pe
+   * traseele proprii), deci e suficient să reîncărcăm lista completă la
+   * orice INSERT/UPDATE — mai simplu și mai sigur decât să reconstruim
+   * rândul din payload-ul brut (fără join-urile de nume traseu/rider).
+   */
+  subscribeRealtime: () => {
+    if (realtimeChannel) return;
+    const supabase = createClient();
+    realtimeChannel = supabase
+      .channel("bookings-changes")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "bookings" },
+        () => get().fetchBookings()
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "bookings" },
+        () => get().fetchBookings()
+      )
+      .subscribe();
+  },
+
+  unsubscribeRealtime: () => {
+    if (realtimeChannel) {
+      const supabase = createClient();
+      supabase.removeChannel(realtimeChannel);
+      realtimeChannel = null;
+    }
   },
 
   create: async (input) => {

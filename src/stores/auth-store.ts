@@ -3,6 +3,7 @@ import type { User, UserRole } from "@/types";
 import { createClient } from "@/lib/supabase/client";
 import { fetchProfileAsUser } from "@/lib/supabase/profile";
 import { useMessagesStore } from "@/stores/messages-store";
+import { useBookingsStore } from "@/stores/bookings-store";
 
 interface AuthState {
   user: User | null;
@@ -80,6 +81,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
   logout: async () => {
     const supabase = createClient();
     useMessagesStore.getState().unsubscribeRealtime();
+    useBookingsStore.getState().unsubscribeRealtime();
     await supabase.auth.signOut();
     set({ user: null, isAuthenticated: false });
   },

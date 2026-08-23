@@ -17,6 +17,7 @@ import { TrackChat } from "@/components/chat/track-chat";
 import { TrackReviews } from "@/components/tracks/track-reviews";
 import { TrackLocationMap } from "@/components/tracks/track-location-map";
 import { TrackImage } from "@/components/tracks/track-image";
+import { TrackSlotsManager } from "@/components/tracks/track-slots-manager";
 import { Bike } from "lucide-react";
 import { useAuthStore } from "@/stores/auth-store";
 import { useFleetStore } from "@/stores/fleet-store";
@@ -35,7 +36,8 @@ interface TrackDetailClientProps {
 }
 
 export function TrackDetailClient({ track }: TrackDetailClientProps) {
-  const { isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
+  const isOwner = user?.id === track.hostId;
   const [bookingOpen, setBookingOpen] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const fleetRecords = useFleetStore((s) => s.fleet);
@@ -159,6 +161,13 @@ export function TrackDetailClient({ track }: TrackDetailClientProps) {
               <TrackLocationMap lat={track.location.lat} lng={track.location.lng} />
             </div>
           </GlassCard>
+
+          {isOwner && (
+            <TrackSlotsManager
+              trackId={track.id}
+              availableSlots={track.availableSlots}
+            />
+          )}
 
           {showChat && (
             <TrackChat
