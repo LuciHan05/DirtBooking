@@ -6,6 +6,7 @@ import { fetchProfileAsUser } from "@/lib/supabase/profile";
 import { useAuthStore } from "@/stores/auth-store";
 import { useTracksStore } from "@/stores/tracks-store";
 import { useFleetStore } from "@/stores/fleet-store";
+import { useReviewsStore } from "@/stores/reviews-store";
 
 /** Verifică sesiunea Supabase și pornește încărcarea traseelor înainte de a afișa UI dependent de auth. */
 export function StoreHydration({ children }: { children: React.ReactNode }) {
@@ -19,6 +20,7 @@ export function StoreHydration({ children }: { children: React.ReactNode }) {
 
     useTracksStore.getState().fetchTracks();
     useFleetStore.getState().fetchFleet();
+    useReviewsStore.getState().fetchReviews();
 
     async function init() {
       const {

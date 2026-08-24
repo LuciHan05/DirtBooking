@@ -67,6 +67,17 @@ export interface DbFleetBike {
   created_at: string;
 }
 
+export interface DbReview {
+  id: string;
+  track_id: string;
+  booking_id: string;
+  rider_id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  profiles?: { name: string } | null;
+}
+
 export interface DbMessage {
   id: string;
   track_id: string | null;

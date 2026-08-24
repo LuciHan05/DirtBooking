@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { Star, Loader2 } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,11 @@ function StarRating({
 export function TrackReviews({ trackId }: TrackReviewsProps) {
   const user = useAuthStore((s) => s.user);
   const bookingRecords = useBookingsStore((s) => s.bookings);
+  const bookingsHasLoaded = useBookingsStore((s) => s.hasLoaded);
+  const fetchBookings = useBookingsStore((s) => s.fetchBookings);
+  useEffect(() => {
+    if (user && !bookingsHasLoaded) fetchBookings();
+  }, [user, bookingsHasLoaded, fetchBookings]);
   const allReviews = useReviewsStore((s) => s.reviews);
   const reviews = useMemo(
     () =>
@@ -84,12 +89,11 @@ export function TrackReviews({ trackId }: TrackReviewsProps) {
     e.preventDefault();
     if (!user || !eligibleBooking) return;
     setError("");
-    startTransition(() => {
-      const result = addReview({
+    startTransition(async () => {
+      const result = await addReview({
         trackId,
         bookingId: eligibleBooking.id,
         riderId: user.id,
-        riderName: user.name,
         rating,
         comment,
       });

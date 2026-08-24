@@ -53,7 +53,6 @@ interface TracksState {
     date: string,
     time: string
   ) => Promise<{ error?: string }>;
-  applyReview: (trackId: string, rating: number) => void;
 }
 
 function recordFromDb(
@@ -254,20 +253,5 @@ export const useTracksStore = create<TracksState>()((set, get) => ({
     if (error) return { error: error.message };
     await get().fetchTracks();
     return {};
-  },
-
-  applyReview: (trackId, rating) => {
-    set((s) => ({
-      tracks: s.tracks.map((t) => {
-        if (t.id !== trackId) return t;
-        const newCount = t.reviewCount + 1;
-        const newRating = (t.rating * t.reviewCount + rating) / newCount;
-        return {
-          ...t,
-          rating: Math.round(newRating * 10) / 10,
-          reviewCount: newCount,
-        };
-      }),
-    }));
   },
 }));

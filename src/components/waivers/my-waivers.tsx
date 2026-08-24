@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import { FileSignature } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
@@ -13,6 +13,11 @@ export function MyWaivers() {
   const user = useAuthStore((s) => s.user);
   const _hasHydrated = useAuthStore((s) => s._hasHydrated);
   const bookingRecords = useBookingsStore((s) => s.bookings);
+  const bookingsHasLoaded = useBookingsStore((s) => s.hasLoaded);
+  const fetchBookings = useBookingsStore((s) => s.fetchBookings);
+  useEffect(() => {
+    if (user && !bookingsHasLoaded) fetchBookings();
+  }, [user, bookingsHasLoaded, fetchBookings]);
 
   const signed = useMemo(
     () =>
