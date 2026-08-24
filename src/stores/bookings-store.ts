@@ -1,10 +1,27 @@
 import { create } from "zustand";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
+import { useTracksStore } from "@/stores/tracks-store";
 import type { BookingRecord } from "@/lib/db/schema";
 import type { DbBooking } from "@/types/database";
 
 let realtimeChannel: RealtimeChannel | null = null;
+
+/** Trimite un email de notificare — nu blochează și nu eșuează fluxul principal. */
+function notifyNewBooking(input: {
+  hostId: string;
+  riderName: string;
+  trackName: string;
+  slotDate: string;
+  timeSlot: string;
+  totalPrice: number;
+}) {
+  fetch("/api/notify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ type: "new_booking", ...input }),
+  }).catch(() => {});
+}
 
 interface CreateBookingInput {
   trackId: string;
@@ -118,6 +135,19 @@ export const useBookingsStore = create<BookingsState>()((set, get) => ({
     });
     if (error) return { success: false, error: error.message };
     await get().fetchBookings();
+
+    const track = useTracksStore.getState().tracks.find((t) => t.id === input.trackId);
+    if (track) {
+      notifyNewBooking({
+        hostId: track.hostId,
+        riderName: input.riderName,
+        trackName: input.trackName,
+        slotDate: input.slotDate,
+        timeSlot: input.timeSlot,
+        totalPrice: input.totalPrice,
+      });
+    }
+
     return { success: true };
   },
 

@@ -140,6 +140,18 @@ export const useMessagesStore = create<MessagesState>()((set, get) => ({
         ? s
         : { messages: [...s.messages, record] }
     );
+
+    fetch("/api/notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        type: "new_message",
+        receiverId,
+        senderName: record.senderName ?? "Un utilizator",
+        content: content.trim(),
+      }),
+    }).catch(() => {});
+
     return {};
   },
 
