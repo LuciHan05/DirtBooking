@@ -43,7 +43,7 @@ function emailShell(bodyHtml: string): string {
   return `
     <div style="font-family: -apple-system, Segoe UI, sans-serif; background: #0a0a0a; padding: 32px 16px;">
       <div style="max-width: 480px; margin: 0 auto; background: #131316; border-radius: 16px; padding: 32px; border: 1px solid rgba(255,255,255,0.08);">
-        <p style="color: #ff6a1f; font-weight: 700; font-size: 18px; margin: 0 0 24px;">DirtBooking</p>
+        <p style="color: #34d399; font-weight: 700; font-size: 18px; margin: 0 0 24px;">DirtBooking</p>
         ${bodyHtml}
       </div>
     </div>
@@ -77,7 +77,7 @@ export function newBookingEmail({
         <strong style="color:#f5f5f5">${h(trackName)}</strong>, pe ${h(slotDate)} la ${h(timeSlot)}
         (${totalPrice} RON).
       </p>
-      <a href="${siteUrl}/dashboard/bookings" style="display:inline-block;margin-top:16px;background:#ff6a1f;color:#0a0a0a;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;">
+      <a href="${siteUrl}/dashboard/bookings" style="display:inline-block;margin-top:16px;background:#34d399;color:#0a0a0a;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;">
         Vezi rezervarea
       </a>
     `),
@@ -106,7 +106,7 @@ export function newMessageEmail({
       <p style="color: #d5d5d5; font-size: 14px; background: rgba(255,255,255,0.05); border-radius: 8px; padding: 12px 16px; font-style: italic;">
         „${h(content)}"
       </p>
-      <a href="${siteUrl}/dashboard/messages" style="display:inline-block;margin-top:16px;background:#ff6a1f;color:#0a0a0a;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;">
+      <a href="${siteUrl}/dashboard/messages" style="display:inline-block;margin-top:16px;background:#34d399;color:#0a0a0a;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;">
         Răspunde
       </a>
     `),

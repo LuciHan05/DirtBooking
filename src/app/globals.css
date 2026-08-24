@@ -67,39 +67,39 @@
   --card-foreground: oklch(0.97 0.005 260);
   --popover: oklch(0.1 0.01 260);
   --popover-foreground: oklch(0.97 0.005 260);
-  --primary: oklch(0.68 0.22 45);
-  --primary-foreground: oklch(0.1 0.02 45);
+  --primary: oklch(0.75 0.19 142);
+  --primary-foreground: oklch(0.12 0.03 142);
   --secondary: oklch(0.18 0.015 260);
   --secondary-foreground: oklch(0.92 0.005 260);
   --muted: oklch(0.16 0.01 260);
   --muted-foreground: oklch(0.62 0.02 260);
-  --accent: oklch(0.55 0.18 250);
+  --accent: oklch(0.6 0.15 255);
   --accent-foreground: oklch(0.97 0.005 260);
   --destructive: oklch(0.65 0.22 25);
   --border: oklch(1 0 0 / 8%);
   --input: oklch(1 0 0 / 10%);
-  --ring: oklch(0.68 0.22 45);
-  --chart-1: oklch(0.68 0.22 45);
-  --chart-2: oklch(0.55 0.18 250);
-  --chart-3: oklch(0.72 0.19 145);
-  --chart-4: oklch(0.75 0.15 85);
+  --ring: oklch(0.75 0.19 142);
+  --chart-1: oklch(0.75 0.19 142);
+  --chart-2: oklch(0.6 0.15 255);
+  --chart-3: oklch(0.72 0.13 190);
+  --chart-4: oklch(0.76 0.13 85);
   --chart-5: oklch(0.6 0.2 320);
   --radius: 0.75rem;
 
   /* Moto brand accents */
-  --ktm-orange: oklch(0.68 0.22 45);
-  --yamaha-blue: oklch(0.55 0.18 250);
-  --kawasaki-green: oklch(0.72 0.19 145);
-  --dirt-gold: oklch(0.75 0.15 85);
+  --ktm-orange: oklch(0.75 0.19 142);
+  --yamaha-blue: oklch(0.6 0.15 255);
+  --kawasaki-green: oklch(0.72 0.13 190);
+  --dirt-gold: oklch(0.76 0.13 85);
 
   --sidebar: oklch(0.09 0.008 260);
   --sidebar-foreground: oklch(0.92 0.005 260);
-  --sidebar-primary: oklch(0.68 0.22 45);
-  --sidebar-primary-foreground: oklch(0.1 0.02 45);
+  --sidebar-primary: oklch(0.75 0.19 142);
+  --sidebar-primary-foreground: oklch(0.12 0.03 142);
   --sidebar-accent: oklch(0.15 0.012 260);
   --sidebar-accent-foreground: oklch(0.92 0.005 260);
   --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.68 0.22 45);
+  --sidebar-ring: oklch(0.75 0.19 142);
 
   /* Glassmorphism */
   --glass-bg: oklch(0.12 0.01 260 / 60%);
@@ -155,9 +155,9 @@
   body {
     @apply bg-background text-foreground min-h-screen antialiased;
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, oklch(0.68 0.22 45 / 8%), transparent),
-      radial-gradient(ellipse 60% 40% at 100% 0%, oklch(0.55 0.18 250 / 6%), transparent),
-      radial-gradient(ellipse 50% 30% at 0% 100%, oklch(0.72 0.19 145 / 5%), transparent);
+      radial-gradient(ellipse 80% 50% at 50% -20%, oklch(0.75 0.19 142 / 8%), transparent),
+      radial-gradient(ellipse 60% 40% at 100% 0%, oklch(0.6 0.15 255 / 6%), transparent),
+      radial-gradient(ellipse 50% 30% at 0% 100%, oklch(0.72 0.13 190 / 5%), transparent);
   }
 
   h1,
@@ -192,20 +192,20 @@
 
   .glow-ktm {
     box-shadow:
-      0 0 20px oklch(0.68 0.22 45 / 25%),
-      0 0 60px oklch(0.68 0.22 45 / 10%);
+      0 0 20px oklch(0.75 0.19 142 / 25%),
+      0 0 60px oklch(0.75 0.19 142 / 10%);
   }
 
   .glow-yamaha {
     box-shadow:
-      0 0 20px oklch(0.55 0.18 250 / 25%),
-      0 0 60px oklch(0.55 0.18 250 / 10%);
+      0 0 20px oklch(0.6 0.15 255 / 25%),
+      0 0 60px oklch(0.6 0.15 255 / 10%);
   }
 
   .glow-kawasaki {
     box-shadow:
-      0 0 20px oklch(0.72 0.19 145 / 25%),
-      0 0 60px oklch(0.72 0.19 145 / 10%);
+      0 0 20px oklch(0.72 0.13 190 / 25%),
+      0 0 60px oklch(0.72 0.13 190 / 10%);
   }
 
   .glow-border-ktm {
@@ -214,23 +214,23 @@
 
   .glow-border-ktm:hover {
     box-shadow:
-      0 0 0 1px oklch(0.68 0.22 45 / 50%),
-      0 0 24px oklch(0.68 0.22 45 / 20%);
+      0 0 0 1px oklch(0.75 0.19 142 / 50%),
+      0 0 24px oklch(0.75 0.19 142 / 20%);
   }
 
   .glow-border-yamaha:hover {
     box-shadow:
-      0 0 0 1px oklch(0.55 0.18 250 / 50%),
-      0 0 24px oklch(0.55 0.18 250 / 20%);
+      0 0 0 1px oklch(0.6 0.15 255 / 50%),
+      0 0 24px oklch(0.6 0.15 255 / 20%);
   }
 
   .text-gradient-ktm {
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(
       135deg,
-      oklch(0.75 0.2 50),
-      oklch(0.68 0.22 45),
-      oklch(0.6 0.18 40)
+      oklch(0.82 0.19 145),
+      oklch(0.75 0.19 142),
+      oklch(0.65 0.17 138)
     );
   }
 
@@ -238,9 +238,9 @@
     @apply bg-clip-text text-transparent;
     background-image: linear-gradient(
       135deg,
-      oklch(0.68 0.22 45),
-      oklch(0.55 0.18 250),
-      oklch(0.72 0.19 145)
+      oklch(0.75 0.19 142),
+      oklch(0.6 0.15 255),
+      oklch(0.72 0.13 190)
     );
   }
 
