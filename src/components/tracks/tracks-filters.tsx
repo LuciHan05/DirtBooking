@@ -51,8 +51,8 @@ export function TracksFilters({ value, onChange, className }: TracksFiltersProps
 
   return (
     <div className={cn("space-y-3", className)}>
-      <div className="flex flex-wrap items-center gap-2">
-        <SlidersHorizontal className="size-4 shrink-0 text-muted-foreground" />
+      <div className="glass glass-edge flex flex-wrap items-center gap-2 rounded-xl p-2">
+        <SlidersHorizontal className="ml-1 size-4 shrink-0 text-muted-foreground" />
         {DIFFICULTY_VALUES.map((d) => (
           <Button
             key={d}

@@ -3,11 +3,13 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuthStore } from "@/stores/auth-store";
+import { EASE_OUT } from "@/lib/animations";
 
 export function LoginForm({ redirectTo }: { redirectTo?: string }) {
   const router = useRouter();
@@ -70,9 +72,21 @@ export function LoginForm({ redirectTo }: { redirectTo?: string }) {
         />
       </div>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      <AnimatePresence initial={false}>
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2, ease: EASE_OUT }}
+            className="overflow-hidden text-sm text-destructive"
+          >
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
 
-      <Button type="submit" className="w-full glow-ktm" disabled={pending}>
+      <Button type="submit" className="w-full glow-ktm press" disabled={pending}>
         {pending ? (
           <>
             <Loader2 className="size-4 animate-spin" />

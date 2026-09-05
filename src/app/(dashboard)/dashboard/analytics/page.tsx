@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { DollarSign, Calendar, MapPinned, Star } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { GlassCard } from "@/components/ui/glass-card";
+import { RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { RevenueChart } from "@/components/dashboard/charts/revenue-chart";
 import { BookingsBarChart } from "@/components/dashboard/charts/bookings-bar-chart";
 import { DifficultyBarList } from "@/components/dashboard/charts/difficulty-bar-list";
@@ -86,37 +87,39 @@ export default function AnalyticsPage() {
         subtitle="Performanța traseelor tale, la zi"
       />
       <div className="flex-1 overflow-y-auto p-6">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.05}>
           {stats.map((stat) => (
-            <GlassCard key={stat.label} className="p-5">
-              <stat.icon className={`size-5 ${stat.accent}`} />
-              <p className="mt-3 font-heading text-2xl font-bold">{stat.value}</p>
-              <p className="text-sm text-muted-foreground">{stat.label}</p>
-            </GlassCard>
+            <RevealItem key={stat.label}>
+              <GlassCard className="glass-edge p-5">
+                <stat.icon className={`size-5 ${stat.accent}`} />
+                <p className="mt-3 font-heading text-2xl font-bold tabular-nums">{stat.value}</p>
+                <p className="text-sm text-muted-foreground">{stat.label}</p>
+              </GlassCard>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
 
         {hostTracks.length === 0 ? (
-          <GlassCard className="mt-6 p-12 text-center text-muted-foreground">
+          <GlassCard className="glass-edge mt-6 p-12 text-center text-muted-foreground">
             Adaugă un traseu pentru a vedea statistici aici.
           </GlassCard>
         ) : (
           <>
             <div className="mt-6 grid gap-6 lg:grid-cols-2">
-              <GlassCard className="p-6">
+              <GlassCard className="glass-edge p-6">
                 <RevenueChart data={weeklyBuckets} />
               </GlassCard>
-              <GlassCard className="p-6">
+              <GlassCard className="glass-edge p-6">
                 <BookingsBarChart data={weeklyBuckets} />
               </GlassCard>
             </div>
 
             <div className="mt-6 grid gap-6 lg:grid-cols-2">
-              <GlassCard className="p-6">
+              <GlassCard className="glass-edge p-6">
                 <DifficultyBarList data={difficultyData} />
               </GlassCard>
 
-              <GlassCard className="p-6">
+              <GlassCard className="glass-edge p-6">
                 <p className="mb-4 text-sm text-muted-foreground">
                   Top trasee după venit
                 </p>

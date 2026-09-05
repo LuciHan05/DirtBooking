@@ -10,6 +10,7 @@ import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { RevealGroup, RevealItem } from "@/components/ui/reveal";
 import {
   formatDate,
   formatPrice,
@@ -50,9 +51,10 @@ function RiderBookings() {
   }
 
   return (
-    <div className="space-y-4">
+    <RevealGroup className="space-y-4" stagger={0.04}>
       {bookings.map((booking) => (
-        <GlassCard key={booking.id} className="p-5">
+        <RevealItem key={booking.id}>
+        <GlassCard className="glass-edge p-5 transition-transform duration-200 hover:-translate-y-0.5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="font-heading font-semibold">
@@ -92,8 +94,9 @@ function RiderBookings() {
             </div>
           </div>
         </GlassCard>
+        </RevealItem>
       ))}
-    </div>
+    </RevealGroup>
   );
 }
 
@@ -124,9 +127,10 @@ function HostBookings() {
   }
 
   return (
-    <div className="space-y-4">
+    <RevealGroup className="space-y-4" stagger={0.04}>
       {bookings.map((booking) => (
-        <GlassCard key={booking.id} className="p-5">
+        <RevealItem key={booking.id}>
+        <GlassCard className="glass-edge p-5 transition-transform duration-200 hover:-translate-y-0.5">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="font-heading font-semibold">{booking.trackName}</h3>
@@ -188,8 +192,9 @@ function HostBookings() {
             </div>
           </div>
         </GlassCard>
+        </RevealItem>
       ))}
-    </div>
+    </RevealGroup>
   );
 }
 

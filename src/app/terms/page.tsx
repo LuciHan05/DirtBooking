@@ -1,5 +1,6 @@
 import { MainLayout } from "@/components/layout/main-layout";
 import { GlassCard } from "@/components/ui/glass-card";
+import { Reveal } from "@/components/ui/reveal";
 import { APP_NAME, APP_COUNTRY } from "@/lib/constants";
 
 export const metadata = {
@@ -45,8 +46,8 @@ const sections = [
 export default function TermsPage() {
   return (
     <MainLayout>
-      <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-        <p className="text-sm font-medium uppercase tracking-widest text-primary">
+      <Reveal className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+        <p className="text-sm font-medium uppercase tracking-[0.22em] text-primary">
           Legal
         </p>
         <h1 className="mt-2 font-heading text-4xl font-bold">
@@ -56,7 +57,7 @@ export default function TermsPage() {
           Ultima actualizare: 1 iulie 2026
         </p>
 
-        <GlassCard className="mt-8 space-y-8 p-6 sm:p-8">
+        <GlassCard className="glass-edge mt-8 space-y-8 p-6 sm:p-8">
           {sections.map((section) => (
             <div key={section.title}>
               <h2 className="font-heading text-lg font-semibold">
@@ -68,7 +69,7 @@ export default function TermsPage() {
             </div>
           ))}
         </GlassCard>
-      </div>
+      </Reveal>
     </MainLayout>
   );
 }

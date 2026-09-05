@@ -7,6 +7,7 @@ import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { useAuthStore } from "@/stores/auth-store";
 import { useTracksStore } from "@/stores/tracks-store";
 import { useBookingsStore } from "@/stores/bookings-store";
@@ -91,21 +92,23 @@ export function HostDashboard() {
       />
 
       <div className="flex-1 overflow-y-auto p-6">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" stagger={0.05}>
           {stats.map((stat) => (
-            <GlassCard key={stat.label} className="p-5">
-              <div className="flex items-center justify-between">
-                <stat.icon className={`size-5 ${stat.accent}`} />
-                <span className="text-xs text-kawasaki">{stat.change}</span>
-              </div>
-              <p className="mt-3 font-heading text-2xl font-bold">{stat.value}</p>
-              <p className="text-sm text-muted-foreground">{stat.label}</p>
-            </GlassCard>
+            <RevealItem key={stat.label}>
+              <GlassCard className="glass-edge p-5 transition-transform duration-200 hover:-translate-y-0.5">
+                <div className="flex items-center justify-between">
+                  <stat.icon className={`size-5 ${stat.accent}`} />
+                  <span className="text-xs text-kawasaki">{stat.change}</span>
+                </div>
+                <p className="mt-3 font-heading text-2xl font-bold tabular-nums">{stat.value}</p>
+                <p className="text-sm text-muted-foreground">{stat.label}</p>
+              </GlassCard>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <GlassCard className="p-6">
+        <Reveal className="mt-6 grid gap-6 lg:grid-cols-2" delay={0.1}>
+          <GlassCard className="glass-edge p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-heading text-lg font-semibold">
                 Rezervări recente
@@ -129,7 +132,7 @@ export function HostDashboard() {
                   .map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[3%] p-3"
+                    className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[3%] p-3 transition-colors duration-200 hover:bg-white/[5%]"
                   >
                     <div>
                       <p className="text-sm font-medium">{booking.trackName}</p>
@@ -151,7 +154,7 @@ export function HostDashboard() {
             </div>
           </GlassCard>
 
-          <GlassCard className="p-6">
+          <GlassCard className="glass-edge p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-heading text-lg font-semibold">
                 Stare flotă
@@ -196,7 +199,7 @@ export function HostDashboard() {
               ))}
             </div>
           </GlassCard>
-        </div>
+        </Reveal>
       </div>
     </>
   );

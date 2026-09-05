@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RoleSelector } from "@/components/auth/role-selector";
 import { useAuthStore } from "@/stores/auth-store";
+import { EASE_OUT } from "@/lib/animations";
 import type { UserRole } from "@/types";
 
 export function RegisterForm() {
@@ -107,11 +109,23 @@ export function RegisterForm() {
         </span>
       </label>
 
-      {error && <p className="text-sm text-destructive">{error}</p>}
+      <AnimatePresence initial={false}>
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2, ease: EASE_OUT }}
+            className="overflow-hidden text-sm text-destructive"
+          >
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
 
       <Button
         type="submit"
-        className="w-full glow-ktm"
+        className="w-full glow-ktm press"
         disabled={pending || !agreed}
       >
         {pending ? (

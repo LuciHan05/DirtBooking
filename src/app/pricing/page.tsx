@@ -4,6 +4,8 @@ import { MainLayout } from "@/components/layout/main-layout";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Magnetic } from "@/components/ui/magnetic";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
 import { APP_NAME } from "@/lib/constants";
 
@@ -76,8 +78,8 @@ export default function PricingPage() {
   return (
     <MainLayout>
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <p className="text-sm font-medium uppercase tracking-widest text-primary">
+        <Reveal className="text-center">
+          <p className="text-sm font-medium uppercase tracking-[0.22em] text-primary">
             Pentru Proprietari
           </p>
           <h1 className="mt-2 font-heading text-4xl font-bold sm:text-5xl">
@@ -87,83 +89,87 @@ export default function PricingPage() {
             Începe gratuit și treci la un plan superior când traseul tău
             crește. Fără costuri ascunse.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-3 lg:items-start">
+        <RevealGroup className="mt-12 grid gap-6 lg:grid-cols-3 lg:items-start" stagger={0.08}>
           {plans.map((plan) => (
-            <GlassCard
-              key={plan.name}
-              glow={plan.accent}
-              strong={plan.featured}
-              className={cn(
-                "relative flex h-full flex-col p-8",
-                plan.featured && "lg:-translate-y-4 lg:scale-[1.03]"
-              )}
-            >
-              {plan.featured && (
-                <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 glow-ktm">
-                  Cel mai popular
-                </Badge>
-              )}
-              <h2 className="font-heading text-xl font-bold">{plan.name}</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {plan.description}
-              </p>
-              <p className="mt-6">
-                <span
-                  className={cn(
-                    "font-heading text-4xl font-bold",
-                    accentText[plan.accent]
-                  )}
-                >
-                  {plan.price}
-                </span>
-                <span className="text-muted-foreground">{plan.period}</span>
-              </p>
-
-              <ul className="mt-6 flex-1 space-y-3">
-                {plan.features.map((feature) => (
-                  <li
-                    key={feature.label}
-                    className="flex items-center gap-2 text-sm"
-                  >
-                    {feature.included ? (
-                      <Check className="size-4 shrink-0 text-kawasaki" />
-                    ) : (
-                      <X className="size-4 shrink-0 text-muted-foreground/50" />
+            <RevealItem key={plan.name} className="h-full">
+              <GlassCard
+                glow={plan.accent}
+                strong={plan.featured}
+                className={cn(
+                  "glass-edge relative flex h-full flex-col p-8 transition-transform duration-300",
+                  plan.featured
+                    ? "lg:-translate-y-4 lg:scale-[1.03]"
+                    : "hover:-translate-y-1"
+                )}
+              >
+                {plan.featured && (
+                  <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 glow-ktm">
+                    Cel mai popular
+                  </Badge>
+                )}
+                <h2 className="font-heading text-xl font-bold">{plan.name}</h2>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {plan.description}
+                </p>
+                <p className="mt-6">
+                  <span
+                    className={cn(
+                      "font-heading text-4xl font-bold",
+                      accentText[plan.accent]
                     )}
-                    <span
-                      className={
-                        feature.included ? "" : "text-muted-foreground/60"
-                      }
+                  >
+                    {plan.price}
+                  </span>
+                  <span className="text-muted-foreground">{plan.period}</span>
+                </p>
+
+                <ul className="mt-6 flex-1 space-y-3">
+                  {plan.features.map((feature) => (
+                    <li
+                      key={feature.label}
+                      className="flex items-center gap-2 text-sm"
                     >
-                      {feature.label}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+                      {feature.included ? (
+                        <Check className="size-4 shrink-0 text-kawasaki" />
+                      ) : (
+                        <X className="size-4 shrink-0 text-muted-foreground/50" />
+                      )}
+                      <span
+                        className={
+                          feature.included ? "" : "text-muted-foreground/60"
+                        }
+                      >
+                        {feature.label}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
 
-              <Link href="/register" className="mt-8">
-                <Button
-                  className={cn(
-                    "w-full",
-                    plan.featured && "glow-ktm"
-                  )}
-                  variant={plan.featured ? "default" : "outline"}
-                >
-                  {plan.price === "Personalizat"
-                    ? "Contactează-ne"
-                    : "Începe acum"}
-                </Button>
-              </Link>
-            </GlassCard>
+                <Magnetic strength={plan.featured ? 8 : 4} className="mt-8 block w-full">
+                  <Link href="/register">
+                    <Button
+                      className={cn("w-full press", plan.featured && "glow-ktm")}
+                      variant={plan.featured ? "default" : "outline"}
+                    >
+                      {plan.price === "Personalizat"
+                        ? "Contactează-ne"
+                        : "Începe acum"}
+                    </Button>
+                  </Link>
+                </Magnetic>
+              </GlassCard>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
 
-        <p className="mt-10 text-center text-xs text-muted-foreground">
-          Notă: platforma este momentan în fază demo — plățile pentru
-          planurile Pro și Business nu sunt încă procesate live.
-        </p>
+        <Reveal delay={0.1}>
+          <p className="mt-10 text-center text-xs text-muted-foreground">
+            Notă: platforma este momentan în fază demo — plățile pentru
+            planurile Pro și Business nu sunt încă procesate live.
+          </p>
+        </Reveal>
       </div>
     </MainLayout>
   );

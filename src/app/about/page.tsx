@@ -1,6 +1,7 @@
 import { MapPin, Users, Target, Heart } from "lucide-react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { GlassCard } from "@/components/ui/glass-card";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { APP_NAME, APP_COUNTRY } from "@/lib/constants";
 
 export const metadata = {
@@ -36,8 +37,8 @@ export default function AboutPage() {
   return (
     <MainLayout>
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <p className="text-sm font-medium uppercase tracking-widest text-primary">
+        <Reveal className="text-center">
+          <p className="text-sm font-medium uppercase tracking-[0.22em] text-primary">
             Despre {APP_NAME}
           </p>
           <h1 className="mt-2 font-heading text-4xl font-bold sm:text-5xl">
@@ -49,33 +50,36 @@ export default function AboutPage() {
             mesaje pe grupuri de Facebook. Am construit platforma pe care
             ne-am fi dorit-o noi înșine.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="mt-16 grid gap-6 sm:grid-cols-3">
+        <RevealGroup className="mt-16 grid gap-6 sm:grid-cols-3" stagger={0.08}>
           {values.map((value) => (
-            <GlassCard key={value.title} glow={value.accent} className="p-6">
-              <div
-                className={`mb-4 inline-flex rounded-xl p-3 ${
-                  value.accent === "ktm"
-                    ? "bg-ktm/15 text-ktm"
-                    : value.accent === "yamaha"
-                      ? "bg-yamaha/15 text-yamaha"
-                      : "bg-kawasaki/15 text-kawasaki"
-                }`}
-              >
-                <value.icon className="size-6" />
-              </div>
-              <h3 className="font-heading text-lg font-semibold">
-                {value.title}
-              </h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {value.description}
-              </p>
-            </GlassCard>
+            <RevealItem key={value.title}>
+              <GlassCard glow={value.accent} className="glass-edge h-full p-6">
+                <div
+                  className={`mb-4 inline-flex rounded-xl p-3 ${
+                    value.accent === "ktm"
+                      ? "bg-ktm/15 text-ktm"
+                      : value.accent === "yamaha"
+                        ? "bg-yamaha/15 text-yamaha"
+                        : "bg-kawasaki/15 text-kawasaki"
+                  }`}
+                >
+                  <value.icon className="size-6" />
+                </div>
+                <h3 className="font-heading text-lg font-semibold">
+                  {value.title}
+                </h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {value.description}
+                </p>
+              </GlassCard>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
 
-        <GlassCard strong className="mt-16 p-8 sm:p-12">
+        <Reveal delay={0.05}>
+        <GlassCard strong className="glass-edge mt-16 p-8 sm:p-12">
           <div className="grid gap-8 sm:grid-cols-2 sm:items-center">
             <div>
               <h2 className="font-heading text-2xl font-bold sm:text-3xl">
@@ -106,7 +110,7 @@ export default function AboutPage() {
               ].map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-xl border border-white/5 bg-white/[3%] p-4 text-center"
+                  className="rounded-xl border border-white/5 bg-white/[3%] p-4 text-center transition-colors duration-200 hover:bg-white/[5%]"
                 >
                   <p className="font-heading text-2xl font-bold text-gradient-ktm">
                     {stat.value}
@@ -119,8 +123,9 @@ export default function AboutPage() {
             </div>
           </div>
         </GlassCard>
+        </Reveal>
 
-        <div className="mt-16 flex flex-col items-center gap-3 text-center">
+        <Reveal className="mt-16 flex flex-col items-center gap-3 text-center" delay={0.05}>
           <Users className="size-8 text-primary" />
           <h2 className="font-heading text-2xl font-bold">
             Ești proprietar de traseu?
@@ -129,7 +134,7 @@ export default function AboutPage() {
             Alătură-te comunității de proprietari și listează-ți traseul
             gratuit în câteva minute.
           </p>
-        </div>
+        </Reveal>
       </div>
     </MainLayout>
   );

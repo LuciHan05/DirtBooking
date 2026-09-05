@@ -34,7 +34,7 @@ export function RoleSelector({ value, onChange }: RoleSelectorProps) {
             key={role.id}
             type="button"
             onClick={() => onChange(role.id)}
-            className={`flex flex-col items-start rounded-xl border p-4 text-left transition-all ${role.accent} ${isActive ? role.activeAccent : ""}`}
+            className={`press flex flex-col items-start rounded-xl border p-4 text-left transition-all duration-200 ${role.accent} ${isActive ? role.activeAccent : ""}`}
           >
             <span className="mb-2 text-2xl">{role.icon}</span>
             <span className="font-heading font-semibold">{role.label}</span>

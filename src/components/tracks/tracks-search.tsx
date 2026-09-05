@@ -26,14 +26,15 @@ export function TracksSearch({
   return (
     <form
       onSubmit={handleSubmit}
-      className={cn("flex gap-2 max-w-md", className)}
+      className={cn("glass glass-edge flex max-w-md gap-2 rounded-xl p-1.5", className)}
     >
       <Input
         placeholder="Filtrează după oraș sau județ..."
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        className="border-0 bg-transparent focus-visible:ring-0"
       />
-      <Button type="submit" variant="outline" size="icon">
+      <Button type="submit" variant="outline" size="icon" className="shrink-0">
         <Search className="size-4" />
       </Button>
     </form>

@@ -12,6 +12,8 @@ import {
 import { MainLayout } from "@/components/layout/main-layout";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
+import { Magnetic } from "@/components/ui/magnetic";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import {
   Tabs,
   TabsContent,
@@ -95,22 +97,27 @@ const accentClasses = {
 
 function StepGrid({ steps }: { steps: typeof riderSteps }) {
   return (
-    <div className="grid gap-6 sm:grid-cols-2">
+    <RevealGroup className="grid gap-6 sm:grid-cols-2" stagger={0.08}>
       {steps.map((step, i) => (
-        <GlassCard key={step.title} glow={step.accent} className="relative p-6">
-          <span className="absolute right-5 top-5 font-heading text-3xl font-bold text-white/10">
-            {String(i + 1).padStart(2, "0")}
-          </span>
-          <div className={`mb-4 inline-flex rounded-xl p-3 ${accentClasses[step.accent]}`}>
-            <step.icon className="size-6" />
-          </div>
-          <h3 className="font-heading text-lg font-semibold">{step.title}</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {step.description}
-          </p>
-        </GlassCard>
+        <RevealItem key={step.title}>
+          <GlassCard
+            glow={step.accent}
+            className="glass-edge relative h-full p-6 transition-transform duration-300 hover:-translate-y-1"
+          >
+            <span className="absolute right-5 top-5 font-heading text-3xl font-bold text-white/10">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <div className={`mb-4 inline-flex rounded-xl p-3 ${accentClasses[step.accent]}`}>
+              <step.icon className="size-6" />
+            </div>
+            <h3 className="font-heading text-lg font-semibold">{step.title}</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {step.description}
+            </p>
+          </GlassCard>
+        </RevealItem>
       ))}
-    </div>
+    </RevealGroup>
   );
 }
 
@@ -118,8 +125,8 @@ export default function HowItWorksPage() {
   return (
     <MainLayout>
       <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <p className="text-sm font-medium uppercase tracking-widest text-primary">
+        <Reveal className="text-center">
+          <p className="text-sm font-medium uppercase tracking-[0.22em] text-primary">
             Cum funcționează
           </p>
           <h1 className="mt-2 font-heading text-4xl font-bold sm:text-5xl">
@@ -129,7 +136,7 @@ export default function HowItWorksPage() {
             Fie că ești rider sau proprietar de traseu, {APP_NAME} face
             procesul simplu și rapid.
           </p>
-        </div>
+        </Reveal>
 
         <Tabs defaultValue="rider" className="mt-12">
           <TabsList className="mx-auto h-10 w-full max-w-sm">
@@ -143,21 +150,25 @@ export default function HowItWorksPage() {
           <TabsContent value="rider" className="mt-8">
             <StepGrid steps={riderSteps} />
             <div className="mt-10 text-center">
-              <Link href="/tracks">
-                <Button size="lg" className="glow-ktm">
-                  Explorează trasee
-                </Button>
-              </Link>
+              <Magnetic strength={8} className="inline-flex">
+                <Link href="/tracks">
+                  <Button size="lg" className="press glow-ktm">
+                    Explorează trasee
+                  </Button>
+                </Link>
+              </Magnetic>
             </div>
           </TabsContent>
           <TabsContent value="host" className="mt-8">
             <StepGrid steps={hostSteps} />
             <div className="mt-10 text-center">
-              <Link href="/register">
-                <Button size="lg" className="glow-yamaha">
-                  Listează-ți traseul
-                </Button>
-              </Link>
+              <Magnetic strength={8} className="inline-flex">
+                <Link href="/register">
+                  <Button size="lg" className="press glow-yamaha">
+                    Listează-ți traseul
+                  </Button>
+                </Link>
+              </Magnetic>
             </div>
           </TabsContent>
         </Tabs>

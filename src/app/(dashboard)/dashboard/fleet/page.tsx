@@ -6,6 +6,8 @@ import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Magnetic } from "@/components/ui/magnetic";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { FleetBikeDialog } from "@/components/dashboard/fleet-bike-dialog";
 import { useAuthStore } from "@/stores/auth-store";
 import { useFleetStore } from "@/stores/fleet-store";
@@ -58,26 +60,31 @@ export default function FleetPage() {
       />
       <div className="flex-1 overflow-y-auto p-6">
         <div className="mb-4 flex justify-end">
-          <Button className="glow-ktm gap-2" onClick={openAdd}>
-            <Plus className="size-4" />
-            Adaugă moto în flotă
-          </Button>
+          <Magnetic strength={6}>
+            <Button className="press glow-ktm gap-2" onClick={openAdd}>
+              <Plus className="size-4" />
+              Adaugă moto în flotă
+            </Button>
+          </Magnetic>
         </div>
 
         {fleet.length === 0 ? (
-          <GlassCard className="p-12 text-center">
-            <Wrench className="mx-auto size-12 text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">
-              Nu ai motociclete în flotă încă.
-            </p>
-            <Button className="mt-4" onClick={openAdd}>
-              Adaugă prima motocicletă
-            </Button>
-          </GlassCard>
+          <Reveal>
+            <GlassCard className="glass-edge p-12 text-center">
+              <Wrench className="mx-auto size-12 text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">
+                Nu ai motociclete în flotă încă.
+              </p>
+              <Button className="press mt-4" onClick={openAdd}>
+                Adaugă prima motocicletă
+              </Button>
+            </GlassCard>
+          </Reveal>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <RevealGroup className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
             {fleet.map((bike) => (
-              <GlassCard key={bike.id} className="overflow-hidden">
+              <RevealItem key={bike.id}>
+              <GlassCard className="glass-edge overflow-hidden transition-transform duration-200 hover:-translate-y-0.5">
                 <div className="relative flex aspect-video items-center justify-center bg-white/[3%]">
                   {bike.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -124,8 +131,9 @@ export default function FleetPage() {
                 </div>
                 </div>
               </GlassCard>
+              </RevealItem>
             ))}
-          </div>
+          </RevealGroup>
         )}
       </div>
 

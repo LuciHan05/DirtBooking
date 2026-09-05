@@ -7,6 +7,9 @@ import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
+import { Magnetic } from "@/components/ui/magnetic";
 import { useAuthStore } from "@/stores/auth-store";
 import { useBookingsStore } from "@/stores/bookings-store";
 import { SEED_GARAGE } from "@/lib/db/seed";
@@ -32,8 +35,9 @@ export function RiderDashboard() {
       />
 
       <div className="flex-1 overflow-y-auto p-6">
-        <div className="grid gap-6 lg:grid-cols-3">
-          <GlassCard className="lg:col-span-2 p-6">
+        <RevealGroup className="grid gap-6 lg:grid-cols-3" stagger={0.06}>
+          <RevealItem className="lg:col-span-2">
+          <GlassCard className="glass-edge h-full p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-heading text-lg font-semibold flex items-center gap-2">
                 <Calendar className="size-5 text-primary" />
@@ -58,7 +62,7 @@ export function RiderDashboard() {
                 {upcoming.map((booking) => (
                   <div
                     key={booking.id}
-                    className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[3%] p-4"
+                    className="flex items-center justify-between rounded-xl border border-white/5 bg-white/[3%] p-4 transition-colors duration-200 hover:bg-white/[5%]"
                   >
                     <div>
                       <p className="font-medium">{booking.trackName}</p>
@@ -88,22 +92,26 @@ export function RiderDashboard() {
               </div>
             )}
           </GlassCard>
+          </RevealItem>
 
-          <GlassCard glow="ktm" className="p-6">
+          <RevealItem>
+          <GlassCard glow="ktm" className="glass-edge h-full p-6">
             <h2 className="font-heading text-lg font-semibold flex items-center gap-2">
               <Star className="size-5 text-dirt fill-dirt" />
               Puncte Dirt
             </h2>
             <p className="mt-4 font-heading text-5xl font-bold text-gradient-ktm">
-              {user?.dirtPoints ?? 0}
+              <AnimatedCounter value={user?.dirtPoints ?? 0} duration={1.2} />
             </p>
             <p className="mt-2 text-sm text-muted-foreground">
               Câștigă puncte din ture și recenzii.
             </p>
           </GlassCard>
-        </div>
+          </RevealItem>
+        </RevealGroup>
 
-        <GlassCard className="mt-6 p-6">
+        <Reveal delay={0.1}>
+        <GlassCard className="glass-edge mt-6 p-6">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="font-heading text-lg font-semibold flex items-center gap-2">
               <Bike className="size-5 text-yamaha" />
@@ -119,7 +127,7 @@ export function RiderDashboard() {
             {garage.map((bike) => (
               <div
                 key={bike.id}
-                className="rounded-xl border border-white/5 bg-white/[3%] p-4"
+                className="rounded-xl border border-white/5 bg-white/[3%] p-4 transition-colors duration-200 hover:bg-white/[5%]"
               >
                 <p className="font-heading font-semibold">
                   {bike.make} {bike.model}
@@ -132,8 +140,12 @@ export function RiderDashboard() {
           </div>
         </GlassCard>
 
-        <div className="mt-6 flex items-center justify-between rounded-2xl border border-white/5 bg-yamaha/5 p-6">
-          <div className="flex items-center gap-3">
+        <div className="glass-edge relative mt-6 flex items-center justify-between overflow-hidden rounded-2xl border border-white/5 bg-yamaha/5 p-6">
+          <div
+            className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full bg-yamaha/15 blur-[80px] animate-aurora-slow"
+            aria-hidden
+          />
+          <div className="relative flex items-center gap-3">
             <MapPin className="size-6 text-yamaha" />
             <div>
               <p className="font-heading font-semibold">Descoperă trasee noi</p>
@@ -142,10 +154,13 @@ export function RiderDashboard() {
               </p>
             </div>
           </div>
-          <Link href="/tracks">
-            <Button className="glow-yamaha">Explorează</Button>
-          </Link>
+          <Magnetic strength={8} className="relative">
+            <Link href="/tracks">
+              <Button className="press glow-yamaha">Explorează</Button>
+            </Link>
+          </Magnetic>
         </div>
+        </Reveal>
       </div>
     </>
   );

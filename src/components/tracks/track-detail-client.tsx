@@ -12,6 +12,8 @@ import {
 import { GlassCard } from "@/components/ui/glass-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
+import { Magnetic } from "@/components/ui/magnetic";
 import { BookingModal } from "@/components/booking/booking-modal";
 import { TrackChat } from "@/components/chat/track-chat";
 import { TrackReviews } from "@/components/tracks/track-reviews";
@@ -53,7 +55,7 @@ export function TrackDetailClient({ track }: TrackDetailClientProps) {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
-          <div className="relative aspect-[21/9] overflow-hidden rounded-2xl">
+          <Reveal className="relative aspect-[21/9] overflow-hidden rounded-2xl">
             <TrackImage
               src={track.images[0]}
               alt={track.name}
@@ -70,9 +72,9 @@ export function TrackDetailClient({ track }: TrackDetailClientProps) {
                 {DIFFICULTY_LABELS[track.difficulty]}
               </Badge>
             </div>
-          </div>
+          </Reveal>
 
-          <div>
+          <Reveal delay={0.05}>
             <h1 className="font-heading text-3xl font-bold sm:text-4xl">
               {track.name}
             </h1>
@@ -83,7 +85,7 @@ export function TrackDetailClient({ track }: TrackDetailClientProps) {
             <div className="mt-3 flex items-center gap-4">
               <div className="flex items-center gap-1">
                 <Star className="size-5 fill-dirt text-dirt" />
-                <span className="font-medium">{track.rating}</span>
+                <span className="font-medium tabular-nums">{track.rating}</span>
                 <span className="text-muted-foreground">
                   ({track.reviewCount} recenzii)
                 </span>
@@ -92,96 +94,112 @@ export function TrackDetailClient({ track }: TrackDetailClientProps) {
                 {SOIL_LABELS[track.soilCondition]}
               </span>
             </div>
-          </div>
+          </Reveal>
 
-          <GlassCard className="p-6">
-            <h2 className="font-heading text-lg font-semibold mb-3">
-              Despre traseu
-            </h2>
-            <p className="text-muted-foreground leading-relaxed">
-              {track.description}
-            </p>
-          </GlassCard>
+          <RevealGroup className="space-y-6" stagger={0.06}>
+            <RevealItem>
+              <GlassCard className="glass-edge p-6">
+                <h2 className="font-heading text-lg font-semibold mb-3">
+                  Despre traseu
+                </h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  {track.description}
+                </p>
+              </GlassCard>
+            </RevealItem>
 
-          {track.amenities.length > 0 && (
-            <GlassCard className="p-6">
-              <h2 className="font-heading text-lg font-semibold mb-3">
-                Facilități
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {track.amenities.map((a) => (
-                  <Badge key={a} variant="outline">
-                    {a}
-                  </Badge>
-                ))}
-              </div>
-            </GlassCard>
-          )}
-
-          {availableBikes.length > 0 && (
-            <GlassCard className="p-6">
-              <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-semibold">
-                <Bike className="size-5 text-yamaha" />
-                Motociclete disponibile de închiriat
-              </h2>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {availableBikes.map((bike) => (
-                  <div
-                    key={bike.id}
-                    className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[3%] p-3"
-                  >
-                    {bike.imageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={bike.imageUrl}
-                        alt={`${bike.make} ${bike.model}`}
-                        className="size-14 shrink-0 rounded-lg object-cover"
-                      />
-                    ) : (
-                      <div className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-white/5">
-                        <Bike className="size-5 text-muted-foreground" />
-                      </div>
-                    )}
-                    <div>
-                      <p className="font-medium">
-                        {bike.make} {bike.model}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {bike.year} · {formatPrice(bike.hourlyRate)}/oră
-                      </p>
-                    </div>
+            {track.amenities.length > 0 && (
+              <RevealItem>
+                <GlassCard className="glass-edge p-6">
+                  <h2 className="font-heading text-lg font-semibold mb-3">
+                    Facilități
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {track.amenities.map((a) => (
+                      <Badge key={a} variant="outline">
+                        {a}
+                      </Badge>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </GlassCard>
-          )}
+                </GlassCard>
+              </RevealItem>
+            )}
 
-          <GlassCard className="overflow-hidden p-0">
-            <div className="h-64">
-              <TrackLocationMap lat={track.location.lat} lng={track.location.lng} />
-            </div>
-          </GlassCard>
+            {availableBikes.length > 0 && (
+              <RevealItem>
+                <GlassCard className="glass-edge p-6">
+                  <h2 className="mb-3 flex items-center gap-2 font-heading text-lg font-semibold">
+                    <Bike className="size-5 text-yamaha" />
+                    Motociclete disponibile de închiriat
+                  </h2>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {availableBikes.map((bike) => (
+                      <div
+                        key={bike.id}
+                        className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[3%] p-3 transition-colors duration-200 hover:bg-white/[5%]"
+                      >
+                        {bike.imageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={bike.imageUrl}
+                            alt={`${bike.make} ${bike.model}`}
+                            className="size-14 shrink-0 rounded-lg object-cover"
+                          />
+                        ) : (
+                          <div className="flex size-14 shrink-0 items-center justify-center rounded-lg bg-white/5">
+                            <Bike className="size-5 text-muted-foreground" />
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-medium">
+                            {bike.make} {bike.model}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {bike.year} · {formatPrice(bike.hourlyRate)}/oră
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </GlassCard>
+              </RevealItem>
+            )}
 
-          {isOwner && (
-            <TrackSlotsManager
-              trackId={track.id}
-              availableSlots={track.availableSlots}
-            />
-          )}
+            <RevealItem>
+              <GlassCard className="glass-edge overflow-hidden p-0">
+                <div className="h-64">
+                  <TrackLocationMap lat={track.location.lat} lng={track.location.lng} />
+                </div>
+              </GlassCard>
+            </RevealItem>
 
-          {showChat && (
-            <TrackChat
-              trackId={track.id}
-              hostId={track.hostId}
-              hostName={track.hostName}
-            />
-          )}
+            {isOwner && (
+              <RevealItem>
+                <TrackSlotsManager
+                  trackId={track.id}
+                  availableSlots={track.availableSlots}
+                />
+              </RevealItem>
+            )}
 
-          <TrackReviews trackId={track.id} />
+            {showChat && (
+              <RevealItem>
+                <TrackChat
+                  trackId={track.id}
+                  hostId={track.hostId}
+                  hostName={track.hostName}
+                />
+              </RevealItem>
+            )}
+
+            <RevealItem>
+              <TrackReviews trackId={track.id} />
+            </RevealItem>
+          </RevealGroup>
         </div>
 
         <div className="space-y-4">
-          <GlassCard glow="ktm" className="p-6 sticky top-24">
+          <GlassCard glow="ktm" className="glass-edge p-6 sticky top-24">
             <p className="font-heading text-3xl font-bold text-primary">
               {formatPrice(track.pricePerSession)}
               <span className="text-base font-normal text-muted-foreground">
@@ -201,14 +219,16 @@ export function TrackDetailClient({ track }: TrackDetailClientProps) {
 
             {isAuthenticated ? (
               <div className="mt-6 space-y-3">
-                <Button
-                  className="w-full glow-ktm gap-2"
-                  size="lg"
-                  onClick={() => setBookingOpen(true)}
-                >
-                  <Calendar className="size-4" />
-                  Rezervă
-                </Button>
+                <Magnetic className="block w-full" strength={6}>
+                  <Button
+                    className="w-full glow-ktm gap-2"
+                    size="lg"
+                    onClick={() => setBookingOpen(true)}
+                  >
+                    <Calendar className="size-4" />
+                    Rezervă
+                  </Button>
+                </Magnetic>
                 <Button
                   variant="outline"
                   className="w-full gap-2"

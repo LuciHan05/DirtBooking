@@ -2,11 +2,13 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
+import { EASE_OUT } from "@/lib/animations";
 
 export function ForgotPasswordForm() {
   const [pending, startTransition] = useTransition();
@@ -32,8 +34,19 @@ export function ForgotPasswordForm() {
 
   if (sent) {
     return (
-      <div className="space-y-4 text-center">
-        <CheckCircle2 className="mx-auto size-12 text-kawasaki" />
+      <motion.div
+        className="space-y-4 text-center"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: EASE_OUT }}
+      >
+        <motion.div
+          initial={{ scale: 0.6, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", bounce: 0.4, duration: 0.6, delay: 0.1 }}
+        >
+          <CheckCircle2 className="mx-auto size-12 text-kawasaki" />
+        </motion.div>
         <p className="text-sm text-muted-foreground">
           Dacă există un cont cu adresa {email}, vei primi un email cu
           instrucțiuni de resetare.
@@ -41,7 +54,7 @@ export function ForgotPasswordForm() {
         <Link href="/login" className="block text-sm text-primary hover:underline">
           Înapoi la autentificare
         </Link>
-      </div>
+      </motion.div>
     );
   }
 
@@ -64,7 +77,7 @@ export function ForgotPasswordForm() {
           autoComplete="email"
         />
       </div>
-      <Button type="submit" className="w-full glow-ktm" disabled={pending}>
+      <Button type="submit" className="w-full glow-ktm press" disabled={pending}>
         {pending ? (
           <>
             <Loader2 className="size-4 animate-spin" />

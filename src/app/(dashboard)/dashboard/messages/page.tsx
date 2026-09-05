@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import { motion } from "framer-motion";
 import { Loader2, Send } from "lucide-react";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { EASE_OUT } from "@/lib/animations";
 import { useAuthStore } from "@/stores/auth-store";
 import { useMessagesStore } from "@/stores/messages-store";
 import { formatDateTime } from "@/lib/format";
@@ -68,7 +70,7 @@ export default function MessagesPage() {
     <>
       <DashboardHeader title="Mesaje" subtitle="Discuții cu rideri și proprietari" />
       <div className="flex flex-1 overflow-hidden p-6 gap-4">
-        <GlassCard className="w-72 shrink-0 overflow-y-auto p-2">
+        <GlassCard className="glass-edge w-72 shrink-0 overflow-y-auto p-2">
           {conversations.length === 0 ? (
             <p className="p-4 text-sm text-muted-foreground">
               Nicio conversație încă. Contactează un proprietar de pe pagina
@@ -82,7 +84,7 @@ export default function MessagesPage() {
                 onClick={() =>
                   selectConversation(conv.otherUserId, conv.trackId)
                 }
-                className={`w-full rounded-lg p-3 text-left text-sm transition-colors ${
+                className={`press w-full rounded-lg p-3 text-left text-sm transition-colors duration-200 ${
                   activeId === conv.otherUserId
                     ? "bg-primary/15 text-primary"
                     : "hover:bg-white/5"
@@ -97,7 +99,7 @@ export default function MessagesPage() {
           )}
         </GlassCard>
 
-        <GlassCard className="flex flex-1 flex-col overflow-hidden">
+        <GlassCard className="glass-edge flex flex-1 flex-col overflow-hidden">
           {activeId ? (
             <>
               <div className="border-b border-white/5 px-4 py-3 font-heading font-semibold">
@@ -107,8 +109,12 @@ export default function MessagesPage() {
                 {messages.map((msg) => {
                   const isMine = msg.senderId === user?.id;
                   return (
-                    <div
+                    <motion.div
                       key={msg.id}
+                      layout
+                      initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ duration: 0.25, ease: EASE_OUT }}
                       className={`flex ${isMine ? "justify-end" : "justify-start"}`}
                     >
                       <div
@@ -123,7 +129,7 @@ export default function MessagesPage() {
                           {formatDateTime(msg.createdAt)}
                         </p>
                       </div>
-                    </div>
+                    </motion.div>
                   );
                 })}
               </div>

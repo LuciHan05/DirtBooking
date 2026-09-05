@@ -31,7 +31,7 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
     .slice(0, 2) ?? "?";
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-white/5 px-6">
+    <header className="glass-edge sticky top-0 z-30 flex h-16 items-center justify-between border-b border-white/5 bg-background/70 px-6 backdrop-blur-md">
       <div>
         <h1 className="font-heading text-xl font-bold">{title}</h1>
         {subtitle && (
@@ -41,15 +41,15 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
 
       <div className="flex items-center gap-3">
         <div className="relative hidden sm:block">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Caută..."
-            className="h-9 w-48 pl-9 lg:w-64"
+            className="peer h-9 w-48 pl-9 transition-shadow duration-200 focus-visible:shadow-[0_0_0_1px_oklch(0.78_0.13_202/40%)] lg:w-64"
           />
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground transition-colors duration-200 peer-focus:text-primary" />
         </div>
         <NotificationsPopover />
         <Link href="/dashboard/profile" aria-label="Profilul meu">
-          <Avatar className="size-8">
+          <Avatar className="press size-8 ring-1 ring-transparent transition-shadow duration-200 hover:ring-primary/40">
             {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user.name} />}
             <AvatarFallback className="bg-primary/20 text-primary text-xs">
               {initials}

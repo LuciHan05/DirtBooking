@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { GlassCard } from "@/components/ui/glass-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthStore } from "@/stores/auth-store";
 import { ROLE_LABELS } from "@/lib/constants";
+import { EASE_OUT } from "@/lib/animations";
 
 export function ProfileForm() {
   const { user, updateProfile } = useAuthStore();
@@ -42,7 +44,7 @@ export function ProfileForm() {
   }
 
   return (
-    <GlassCard className="p-6 sm:p-8">
+    <GlassCard className="glass-edge p-6 sm:p-8">
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex items-center gap-4">
           <Avatar size="lg">
@@ -85,10 +87,22 @@ export function ProfileForm() {
           />
         </div>
 
-        {error && <p className="text-sm text-destructive">{error}</p>}
+        <AnimatePresence initial={false}>
+          {error && (
+            <motion.p
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2, ease: EASE_OUT }}
+              className="overflow-hidden text-sm text-destructive"
+            >
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
 
         <div className="flex items-center gap-3">
-          <Button type="submit" className="glow-ktm" disabled={pending}>
+          <Button type="submit" className="press glow-ktm" disabled={pending}>
             {pending ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
@@ -98,12 +112,20 @@ export function ProfileForm() {
               "Salvează modificările"
             )}
           </Button>
-          {saved && !pending && (
-            <span className="flex items-center gap-1.5 text-sm text-kawasaki">
-              <CheckCircle2 className="size-4" />
-              Salvat
-            </span>
-          )}
+          <AnimatePresence>
+            {saved && !pending && (
+              <motion.span
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25, ease: EASE_OUT }}
+                className="flex items-center gap-1.5 text-sm text-kawasaki"
+              >
+                <CheckCircle2 className="size-4" />
+                Salvat
+              </motion.span>
+            )}
+          </AnimatePresence>
         </div>
       </form>
     </GlassCard>

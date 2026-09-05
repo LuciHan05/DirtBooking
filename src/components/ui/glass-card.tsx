@@ -3,22 +3,27 @@ import { cn } from "@/lib/utils";
 interface GlassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   glow?: "ktm" | "yamaha" | "kawasaki" | "none";
   strong?: boolean;
+  /** Bright top rim — light catching the edge of the material. */
+  edge?: boolean;
 }
 
 /**
- * Glassmorphism card with optional neon glow on hover.
+ * Translucent surface. Weight encodes hierarchy: `strong` is for structural
+ * chrome (header, hero panels), the default for content sitting on top of it.
+ * Never stack two light glass surfaces — legibility collapses.
  */
 export function GlassCard({
   className,
   glow = "none",
   strong = false,
+  edge = true,
   children,
   ...props
 }: GlassCardProps) {
   const glowClass = {
     ktm: "glow-border-ktm",
-    yamaha: "glow-border-yamaha transition-shadow duration-300",
-    kawasaki: "transition-shadow duration-300 hover:shadow-[0_0_24px_oklch(0.72_0.19_145/20%)]",
+    yamaha: "glow-border-yamaha",
+    kawasaki: "glow-border-kawasaki",
     none: "",
   }[glow];
 
@@ -27,6 +32,7 @@ export function GlassCard({
       className={cn(
         "rounded-2xl",
         strong ? "glass-strong" : "glass",
+        edge && "glass-edge",
         glowClass,
         className
       )}

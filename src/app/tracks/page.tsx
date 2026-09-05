@@ -11,6 +11,7 @@ import {
   EMPTY_FILTERS,
   type TrackFiltersState,
 } from "@/components/tracks/tracks-filters";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { useTracksStore } from "@/stores/tracks-store";
 import { filterTrackRecords, trackRecordToTrack } from "@/lib/db/mappers";
 import { APP_COUNTRY } from "@/lib/constants";
@@ -47,7 +48,15 @@ function TracksList({
     return (
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="aspect-[4/5] animate-pulse rounded-2xl bg-white/5" />
+          <div
+            key={i}
+            className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-white/[4%]"
+          >
+            <div
+              className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/[6%] to-transparent animate-shimmer"
+              aria-hidden
+            />
+          </div>
         ))}
       </div>
     );
@@ -55,22 +64,20 @@ function TracksList({
 
   if (tracks.length === 0) {
     return (
-      <p className="text-muted-foreground">
+      <Reveal className="rounded-2xl border border-dashed border-white/10 p-12 text-center text-muted-foreground">
         Niciun traseu găsit. Încearcă alt oraș, județ sau filtre diferite.
-      </p>
+      </Reveal>
     );
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <RevealGroup className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" stagger={0.06}>
       {tracks.map((track, i) => (
-        <TrackCard
-          key={track.id}
-          track={track}
-          glow={glows[i % glows.length]}
-        />
+        <RevealItem key={track.id} className="h-full">
+          <TrackCard track={track} glow={glows[i % glows.length]} />
+        </RevealItem>
       ))}
-    </div>
+    </RevealGroup>
   );
 }
 
@@ -80,9 +87,9 @@ function TracksPageContent() {
   const [filters, setFilters] = useState<TrackFiltersState>(EMPTY_FILTERS);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <div className="mb-10">
-        <p className="text-sm font-medium uppercase tracking-widest text-primary">
+    <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <Reveal className="mb-10" distance={16}>
+        <p className="text-sm font-medium uppercase tracking-[0.22em] text-primary">
           {APP_COUNTRY}
         </p>
         <h1 className="mt-2 font-heading text-4xl font-bold">
@@ -94,10 +101,12 @@ function TracksPageContent() {
             ? `Rezultate pentru „${location}"`
             : `Toate traseele enduro din ${APP_COUNTRY}`}
         </p>
-      </div>
+      </Reveal>
 
-      <TracksSearch initialLocation={location} className="mb-6" />
-      <TracksFilters value={filters} onChange={setFilters} className="mb-8" />
+      <Reveal delay={0.05} distance={16}>
+        <TracksSearch initialLocation={location} className="mb-6" />
+        <TracksFilters value={filters} onChange={setFilters} className="mb-8" />
+      </Reveal>
       <TracksList location={location} filters={filters} />
     </div>
   );

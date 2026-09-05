@@ -2,6 +2,7 @@ import { ShieldCheck, FileSignature, AlertTriangle } from "lucide-react";
 import { MainLayout } from "@/components/layout/main-layout";
 import { GlassCard } from "@/components/ui/glass-card";
 import { MyWaivers } from "@/components/waivers/my-waivers";
+import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { APP_NAME } from "@/lib/constants";
 
 export const metadata = {
@@ -43,7 +44,8 @@ export default function WaiversPage() {
   return (
     <MainLayout>
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-        <p className="text-sm font-medium uppercase tracking-widest text-primary">
+        <Reveal>
+        <p className="text-sm font-medium uppercase tracking-[0.22em] text-primary">
           Siguranță
         </p>
         <h1 className="mt-2 font-heading text-4xl font-bold">
@@ -53,22 +55,26 @@ export default function WaiversPage() {
           Fiecare rezervare pe {APP_NAME} include o declarație digitală pe
           proprie răspundere, semnată electronic înainte de tură.
         </p>
+        </Reveal>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+        <RevealGroup className="mt-10 grid gap-4 sm:grid-cols-3" stagger={0.08}>
           {points.map((point) => (
-            <GlassCard key={point.title} glow={point.accent} className="p-5">
-              <div className={`mb-3 inline-flex rounded-xl p-2.5 ${accentClasses[point.accent]}`}>
-                <point.icon className="size-5" />
-              </div>
-              <h3 className="font-heading font-semibold">{point.title}</h3>
-              <p className="mt-1.5 text-sm text-muted-foreground">
-                {point.description}
-              </p>
-            </GlassCard>
+            <RevealItem key={point.title}>
+              <GlassCard glow={point.accent} className="glass-edge h-full p-5">
+                <div className={`mb-3 inline-flex rounded-xl p-2.5 ${accentClasses[point.accent]}`}>
+                  <point.icon className="size-5" />
+                </div>
+                <h3 className="font-heading font-semibold">{point.title}</h3>
+                <p className="mt-1.5 text-sm text-muted-foreground">
+                  {point.description}
+                </p>
+              </GlassCard>
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
 
-        <GlassCard className="mt-10 p-6 sm:p-8">
+        <Reveal>
+        <GlassCard className="glass-edge mt-10 p-6 sm:p-8">
           <h2 className="font-heading text-lg font-semibold">
             Textul standard al declarației
           </h2>
@@ -84,13 +90,14 @@ export default function WaiversPage() {
             traseului lor — acestea vor fi afișate la momentul rezervării.
           </p>
         </GlassCard>
+        </Reveal>
 
-        <div className="mt-12">
+        <Reveal className="mt-12">
           <h2 className="mb-4 font-heading text-xl font-semibold">
             Declarațiile tale semnate
           </h2>
           <MyWaivers />
-        </div>
+        </Reveal>
       </div>
     </MainLayout>
   );

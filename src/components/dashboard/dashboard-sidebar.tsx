@@ -44,7 +44,7 @@ export function DashboardSidebar() {
   return (
     <aside
       className={cn(
-        "glass-strong flex h-full flex-col border-r border-white/5 transition-all duration-300 shrink-0",
+        "glass-strong glass-edge relative z-10 flex h-full flex-col border-r border-white/5 transition-all duration-300 shrink-0",
         collapsed ? "w-[68px]" : "w-64"
       )}
     >
